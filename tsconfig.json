@@ -1,0 +1,11 @@
+{
+    "compilerOptions" : {
+        "types" : [
+            "svelte"
+        ],
+        "lib": [
+            "ES2016",
+            "dom"
+        ]
+    }
+}
