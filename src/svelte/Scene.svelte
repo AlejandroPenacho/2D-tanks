@@ -1,18 +1,23 @@
 <script lang="ts">
     import Player from "/src/svelte/Player.svelte";
+    import Bullet from "/src/svelte/Bullet.svelte";
+
     import * as ply from "./../ts/player";
     import { onMount } from "svelte";
 
     let scene;
     let scene_dim = [10000, 10000];
+    let scene_offset = [0, 0];
 
     let player_list = [
         new ply.Player(['w','d','s','a'], scene_dim),
         new ply.Player(["ArrowUp","ArrowRight","ArrowDown","ArrowLeft"], scene_dim)
     ];
+    let bullet_list = [];
 
     onMount(()=> {
         scene_dim = [scene.clientWidth, scene.clientHeight];
+        scene_offset = [scene.getBoundingClientRect().left, scene.getBoundingClientRect().top];
         player_list = [
             new ply.Player(['w','d','s','a'], scene_dim),
             new ply.Player(["ArrowUp","ArrowRight","ArrowDown","ArrowLeft"], scene_dim)
@@ -24,8 +29,12 @@
     let mouse_position = [0, 0];
 
     let mousemove_fun = (e) => {
-        mouse_position = [e.clientX - e.target.getBoundingClientRect().left, 
-                          e.clientY - e.target.getBoundingClientRect().top];
+        mouse_position = [e.clientX - scene_offset[0], 
+                          e.clientY - scene_offset[1]
+                        ];
+        player_list.forEach((player) => {
+            player.angle = Math.atan2((mouse_position[1]-player.position[1]),mouse_position[0]-player.position[0]) * 180/Math.PI;
+        });
     };
 
 
@@ -57,6 +66,11 @@
 
     requestAnimationFrame(frame);
 
+    function shoot(player_index: number) {
+        bullet_list.push(player_list[player_index].shoot());
+    }
+
+
     let frame_time = undefined;
     let time_step = undefined;
 
@@ -67,8 +81,10 @@
         time_step = time - frame_time;
         frame_time = time;
 
-        player_list.forEach((x) => {return x.update_frame(time_step)});
+        player_list.forEach((x) => {x.update_frame(time_step)});
+        bullet_list.forEach((x) => {x.update_frame(time_step)});
         player_list = player_list;
+        bullet_list = bullet_list;
         requestAnimationFrame(frame);
     }
 </script>
@@ -80,11 +96,16 @@
         width: 90vw;
         margin: auto;
         position: relative;
+        -moz-user-select: none;
+        -webkit-user-select: none;
     }
 </style>
 
-<div class="main" on:mousemove={mousemove_fun} bind:this={scene}>
+<div class="main" on:click={() => {shoot(0)}} on:mousemove={mousemove_fun} bind:this={scene}>
     {#each player_list as player}
-        <Player player={player} mouse_pos={mouse_position}/>
+        <Player player={player}/>
+    {/each}
+    {#each bullet_list as bullet}
+        <Bullet bullet={bullet} />
     {/each}
 </div>

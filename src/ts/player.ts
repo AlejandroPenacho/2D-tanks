@@ -4,6 +4,7 @@ export class Player {
     speed: number[];
     acceleration: number[];
     max_speed: number;
+    angle: number;
     max_acceleration: number;
     brake_acceleration: number;
     keys: Array<string>;
@@ -22,7 +23,15 @@ export class Player {
         this.brake_acceleration = this.max_speed / acceleration_time;
         this.keys = keys;
         this.scene_dimensions = scene_dimensions;
+        this.angle = 0;
     }
+
+    shoot() {
+        return new Bullet(  this.position, 
+                            this.angle,
+                            this.scene_dimensions)
+    }
+
 
     update_speed(key_pressed){
         if (key_pressed[this.keys[0]] && !key_pressed[this.keys[2]]) {
@@ -54,5 +63,22 @@ export class Player {
             }
         })
         this.position = this.position.map((x,i) => {return (x + this.speed[i]*time_step)})
+    }
+}
+
+export class Bullet {
+    position: number[];
+    velocity: number[];
+    angle: number[];
+
+    constructor(position, angle, scene_dimensions){
+        let side_time = 1000;
+        this.position = position;
+        this.angle = angle;
+        this.velocity = [Math.cos, Math.sin].map((trig) => trig(angle*Math.PI/180)*scene_dimensions[0]/side_time)
+    }
+
+    update_frame(time_step){
+        this.position = this.position.map((x,i) => {return (x + this.velocity[i]*time_step)})
     }
 }
