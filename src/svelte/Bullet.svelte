@@ -15,6 +15,8 @@
 </style>
 
 <div class='main'
-     style="transform: translate(-1cm, -1cm) translate({bullet.position[0]}px, {bullet.position[1]}px) rotate({bullet.angle}deg)">
-    <img src="/assets/bullet.svg" alt="bullet"/>
+     style="transform: translate({bullet.position[0]}px, {bullet.position[1]}px)
+            translate(-50%, -50%) 
+            rotate({bullet.angle}deg)">
+        <img src="/assets/bullet.svg" alt="bullet"/>
 </div>

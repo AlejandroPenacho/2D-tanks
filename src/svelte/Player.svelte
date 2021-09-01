@@ -17,12 +17,10 @@
 </style>
 
 <div class="main"
-     style="transform: translate(-1cm, -1cm) 
+     style="transform: translate(-50%, -50%) 
                        translate({player.state.position[0]}px, {player.state.position[1]}px) 
                        rotate({player.state.angle}deg)">
     <img src="/assets/player.svg" alt="Me" />
     <img src="/assets/gun.svg" alt="Gun" />
 </div>
-<div style="margin-left: 5cm">
-    {player.state.angle}
-</div>
+
