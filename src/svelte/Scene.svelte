@@ -26,6 +26,9 @@
             }, scene_dim)
         ]
     let bullet_list = [];
+    let gravity_well_list = [
+        new ply.GravityWell([600, 600], 500)
+    ];
 
     onMount(()=> {
         scene_dim = [scene.clientWidth, scene.clientHeight];
@@ -77,6 +80,7 @@
         }
     }
 
+
     requestAnimationFrame(frame);
 
 
@@ -91,9 +95,11 @@
         frame_time = time;
 
         player_list.forEach((x) => {x.update_frame(time_step, key_pressed)});
-        bullet_list.forEach((x) => {x.update_frame(time_step, key_pressed)});
+        bullet_list.forEach((x) => {x.get_gravity_influence(gravity_well_list, time_step);  x.update_frame(time_step, key_pressed)});
+        bullet_list = bullet_list.filter((x) => {
+            return !((x.position[0] < 0) || (x.position[0] > scene_dim[0]) || (x.position[1] < 0) || (x.position[1] > scene_dim[1]))
+        })
         player_list = player_list;
-        bullet_list = bullet_list;
         requestAnimationFrame(frame);
     }
 </script>
@@ -107,14 +113,29 @@
         position: relative;
         -moz-user-select: none;
         -webkit-user-select: none;
+        cursor: none;
     }
 </style>
 
-<div class="main" bind:this={scene}>
+<div class="main"
+     bind:this={scene} 
+     on:mousemove={(e) => {
+         gravity_well_list[0].position = [e.clientX-scene_offset[0], e.clientY-scene_offset[1]]
+         gravity_well_list = gravity_well_list;
+         }}>
     {#each player_list as player}
         <Player player={player}/>
     {/each}
     {#each bullet_list as bullet}
         <Bullet bullet={bullet} />
+    {/each}
+    {#each gravity_well_list as well}
+        <div style="height: 1cm; 
+                    width: 1cm; 
+                    position: absolute;
+                    transform: translate({well.position[0]}px, {well.position[1]}px) translate(-50%, -50%);
+                    background-color: red;
+                    border-radius: 5mm">
+        </div>
     {/each}
 </div>

@@ -87,7 +87,7 @@ export class Tank {
 export class Bullet {
     position: number[];
     velocity: number[];
-    angle: number[];
+    angle: number;
 
     constructor(position, angle, scene_dimensions){
         let side_time = 1000;
@@ -98,6 +98,23 @@ export class Bullet {
 
     update_frame(time_step){
         this.position = this.position.map((x,i) => {return (x + this.velocity[i]*time_step)})
+    }
+    get_gravity_influence(gravity_well_list: GravityWell[], time_step: number){
+        gravity_well_list.forEach((x) => {
+            let denominator = Math.pow(Math.pow(this.position[0] - x.position[0], 2) + Math.pow(this.position[1] - x.position[1], 2),3/2);
+            this.velocity[0] += time_step * x.strength * (x.position[0] - this.position[0])/denominator;
+            this.velocity[1] += time_step * x.strength * (x.position[1] - this.position[1])/denominator;
+            this.angle = Math.atan2(this.velocity[1], this.velocity[0])*180/Math.PI;
+        })
+    }
+}
+
+export class GravityWell {
+    position: number[];
+    strength: number;
+    constructor(position, strength) {
+        this.position = position;
+        this.strength = strength;
     }
 }
 
