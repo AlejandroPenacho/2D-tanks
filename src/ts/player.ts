@@ -1,68 +1,85 @@
-
-export class Player {
+interface TankState {
     position: number[];
-    speed: number[];
-    acceleration: number[];
-    max_speed: number;
+    speed: number;
     angle: number;
-    max_acceleration: number;
-    brake_acceleration: number;
-    keys: Array<string>;
+    angular_speed: number;
+}
+
+interface TankStats {
+    max_speed: number;
+    max_angular_speed: number;
+    acceleration: number;
+    angular_acceleration: number;
+}
+
+interface TankKeys {
+    up: string,
+    down: string,
+    left: string,
+    right: string
+}
+
+
+export class Tank {
+    state: TankState;
+    stats: TankStats;
+    keys: TankKeys;
     scene_dimensions: number[];
 
-    constructor(keys: Array<string>, scene_dimensions: number[]){
+    constructor(keys: TankKeys, scene_dimensions: number[]){
 
         let side_time = 6000;
         let acceleration_time = 20;
 
-        this.position = [0, 0];
-        this.speed = [0, 0];
-        this.acceleration = [0, 0];
-        this.max_speed = scene_dimensions[0]/side_time;
-        this.max_acceleration = this.max_speed / acceleration_time;
-        this.brake_acceleration = this.max_speed / acceleration_time;
+        this.state = {
+            position : [0, 0],
+            speed : 0,
+            angle: 0,
+            angular_speed: 0
+        };
+        this.stats = {
+            max_speed: scene_dimensions[0]/side_time,
+            acceleration: scene_dimensions[0]/side_time / acceleration_time,
+            angular_acceleration: 5,
+            max_angular_speed: 0.2
+        }
+
         this.keys = keys;
         this.scene_dimensions = scene_dimensions;
-        this.angle = 0;
     }
 
     shoot() {
-        return new Bullet(  this.position, 
-                            this.angle,
+        return new Bullet(  this.state.position, 
+                            this.state.angle,
                             this.scene_dimensions)
     }
 
-
-    update_speed(key_pressed){
-        if (key_pressed[this.keys[0]] && !key_pressed[this.keys[2]]) {
-            this.acceleration[1] = -this.max_acceleration;
-        } else if (!key_pressed[this.keys[0]] && key_pressed[this.keys[2]]) {
-            this.acceleration[1] = this.max_acceleration;
+    update_frame(time_step, pressed: Map<string, boolean>) {
+        if (pressed[this.keys.up] && !pressed[this.keys.down]){
+            this.state.speed = clamped_change(this.state.speed, this.stats.acceleration*time_step, 
+                                                [-this.stats.max_speed, this.stats.max_speed]);
+        } else if (!pressed[this.keys.up] && pressed[this.keys.down]) {
+            this.state.speed = clamped_change(this.state.speed, -this.stats.acceleration*time_step, 
+                [-this.stats.max_speed, this.stats.max_speed]);
         } else {
-            this.acceleration[1] = 0;
+            this.state.speed = drift_to(this.state.speed, this.stats.acceleration*time_step, 0);
         }
-        if (key_pressed[this.keys[1]] && !key_pressed[this.keys[3]]) {
-            this.acceleration[0] = this.max_acceleration;
-        } else if (!key_pressed[this.keys[1]] && key_pressed[this.keys[3]]) {
-            this.acceleration[0] = -this.max_acceleration;
-        } else {
-            this.acceleration[0] = 0;
-        }
-    }
 
-    update_frame(time_step) {
-        this.speed = this.speed.map((v,i) => {
-            if (this.acceleration[i] !== 0) {
-                return Math.max(Math.min(v + this.acceleration[i]*time_step, this.max_speed), -this.max_speed)
-            } else {
-                if (v > 0) {
-                    return Math.max(v - this.brake_acceleration, 0)
-                } else {
-                    return Math.min(v + this.brake_acceleration, 0)   
-                }
-            }
-        })
-        this.position = this.position.map((x,i) => {return (x + this.speed[i]*time_step)})
+        if (pressed[this.keys.right] && !pressed[this.keys.left]){
+            this.state.angular_speed = clamped_change(this.state.angular_speed, this.stats.angular_acceleration*time_step, 
+                                                    [-this.stats.max_angular_speed, this.stats.max_angular_speed]);
+        } else if (!pressed[this.keys.right] && pressed[this.keys.left]) {
+            this.state.angular_speed = clamped_change(this.state.angular_speed, -this.stats.angular_acceleration*time_step, 
+                                                    [-this.stats.max_angular_speed, this.stats.max_angular_speed]);
+        } else {
+            this.state.angular_speed = drift_to(this.state.angular_speed, this.stats.angular_acceleration*time_step, 0);
+        }
+
+        this.state.angle += this.state.angular_speed * time_step;
+        this.state.position = [
+            this.state.position[0] + this.state.speed * time_step * Math.cos(this.state.angle*Math.PI/180),
+            this.state.position[1] + this.state.speed * time_step * Math.sin(this.state.angle*Math.PI/180),
+        ]
     }
 }
 
@@ -80,5 +97,16 @@ export class Bullet {
 
     update_frame(time_step){
         this.position = this.position.map((x,i) => {return (x + this.velocity[i]*time_step)})
+    }
+}
+
+function clamped_change(x0: number, delta: number, limits: [number, number]){
+    return Math.max(Math.min(x0 + delta, limits[1]), limits[0])
+}
+function drift_to(x0: number, delta_x: number, obj: number){
+    if (x0>obj){
+        return Math.max(x0 - delta_x, obj)
+    } else {
+        return Math.min(x0 + delta_x, obj)
     }
 }

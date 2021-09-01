@@ -10,58 +10,59 @@
     let scene_offset = [0, 0];
 
     let player_list = [
-        new ply.Player(['w','d','s','a'], scene_dim),
-        new ply.Player(["ArrowUp","ArrowRight","ArrowDown","ArrowLeft"], scene_dim)
-    ];
+            new ply.Tank({
+                up: "w",
+                down: "s",
+                right: "d",
+                left: "a"
+            }, scene_dim),
+            new ply.Tank({
+                up: "ArrowUp",
+                right: "ArrowRight",
+                down: "ArrowDown",
+                left: "ArrowLeft"
+            }, scene_dim)
+        ]
     let bullet_list = [];
 
     onMount(()=> {
         scene_dim = [scene.clientWidth, scene.clientHeight];
         scene_offset = [scene.getBoundingClientRect().left, scene.getBoundingClientRect().top];
         player_list = [
-            new ply.Player(['w','d','s','a'], scene_dim),
-            new ply.Player(["ArrowUp","ArrowRight","ArrowDown","ArrowLeft"], scene_dim)
+            new ply.Tank({
+                up: "w",
+                down: "s",
+                right: "d",
+                left: "a"
+            }, scene_dim),
+//            new ply.Tank({
+//                up: "ArrowUp",
+ //               right: "ArrowRight",
+//                down: "ArrowDown",
+//                left: "ArrowLeft"
+//            }, scene_dim)
         ]
     });
 
 
-
-    let mouse_position = [0, 0];
-
-    let mousemove_fun = (e) => {
-        mouse_position = [e.clientX - scene_offset[0], 
-                          e.clientY - scene_offset[1]
-                        ];
-        player_list.forEach((player) => {
-            player.angle = Math.atan2((mouse_position[1]-player.position[1]),mouse_position[0]-player.position[0]) * 180/Math.PI;
-        });
-    };
-
-
-
-    let key_pressed = {};
+    let key_pressed = new Map();
     player_list.forEach((player) => {
-        player.keys.forEach( (key) => {
-            key_pressed[key] = false;
-        })
+        key_pressed[player.keys.up] = false;
+        key_pressed[player.keys.down] = false;
+        key_pressed[player.keys.right] = false;
+        key_pressed[player.keys.left] = false;
     })
 
     document.onkeydown = (e) => {
         if (!e.repeat) {
             key_pressed[e.key] = true;
-            update_speed();
         }
     }
 
     document.onkeyup = (e) => {
         if (!e.repeat) {
             key_pressed[e.key] = false;
-            update_speed();
         }
-    }
-
-    function update_speed(){
-        player_list.forEach((x) => {x.update_speed(key_pressed)});
     }
 
     requestAnimationFrame(frame);
@@ -81,8 +82,8 @@
         time_step = time - frame_time;
         frame_time = time;
 
-        player_list.forEach((x) => {x.update_frame(time_step)});
-        bullet_list.forEach((x) => {x.update_frame(time_step)});
+        player_list.forEach((x) => {x.update_frame(time_step, key_pressed)});
+        bullet_list.forEach((x) => {x.update_frame(time_step, key_pressed)});
         player_list = player_list;
         bullet_list = bullet_list;
         requestAnimationFrame(frame);
@@ -101,7 +102,7 @@
     }
 </style>
 
-<div class="main" on:click={() => {shoot(0)}} on:mousemove={mousemove_fun} bind:this={scene}>
+<div class="main" on:click={() => {shoot(0)}} bind:this={scene}>
     {#each player_list as player}
         <Player player={player}/>
     {/each}
