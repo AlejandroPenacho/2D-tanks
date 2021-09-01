@@ -14,13 +14,15 @@
                 up: "w",
                 down: "s",
                 right: "d",
-                left: "a"
+                left: "a",
+                shoot: " "
             }, scene_dim),
             new ply.Tank({
                 up: "ArrowUp",
                 right: "ArrowRight",
                 down: "ArrowDown",
-                left: "ArrowLeft"
+                left: "ArrowLeft",
+                shoot: "/"
             }, scene_dim)
         ]
     let bullet_list = [];
@@ -33,29 +35,39 @@
                 up: "w",
                 down: "s",
                 right: "d",
-                left: "a"
+                left: "a",
+                shoot:" "
             }, scene_dim),
-//            new ply.Tank({
-//                up: "ArrowUp",
- //               right: "ArrowRight",
-//                down: "ArrowDown",
-//                left: "ArrowLeft"
-//            }, scene_dim)
+            new ply.Tank({
+                up: "ArrowUp",
+                right: "ArrowRight",
+                down: "ArrowDown",
+                left: "ArrowLeft",
+                shoot: "/"
+            }, scene_dim)
         ]
     });
 
 
     let key_pressed = new Map();
+    let shoot_keys = [];
     player_list.forEach((player) => {
         key_pressed[player.keys.up] = false;
         key_pressed[player.keys.down] = false;
         key_pressed[player.keys.right] = false;
         key_pressed[player.keys.left] = false;
+        shoot_keys.push(player.keys.shoot);
     })
 
     document.onkeydown = (e) => {
         if (!e.repeat) {
             key_pressed[e.key] = true;
+            let shooter = shoot_keys.indexOf(e.key);
+            if (shooter !== -1) {
+                bullet_list.push(player_list[shooter].shoot())
+                e.preventDefault();
+
+            }
         }
     }
 
@@ -66,10 +78,6 @@
     }
 
     requestAnimationFrame(frame);
-
-    function shoot(player_index: number) {
-        bullet_list.push(player_list[player_index].shoot());
-    }
 
 
     let frame_time = undefined;
@@ -102,7 +110,7 @@
     }
 </style>
 
-<div class="main" on:click={() => {shoot(0)}} bind:this={scene}>
+<div class="main" bind:this={scene}>
     {#each player_list as player}
         <Player player={player}/>
     {/each}

@@ -16,7 +16,8 @@ interface TankKeys {
     up: string,
     down: string,
     left: string,
-    right: string
+    right: string,
+    shoot: string
 }
 
 
@@ -29,7 +30,7 @@ export class Tank {
     constructor(keys: TankKeys, scene_dimensions: number[]){
 
         let side_time = 6000;
-        let acceleration_time = 20;
+        let acceleration_time = 200;
 
         this.state = {
             position : [0, 0],
@@ -40,7 +41,7 @@ export class Tank {
         this.stats = {
             max_speed: scene_dimensions[0]/side_time,
             acceleration: scene_dimensions[0]/side_time / acceleration_time,
-            angular_acceleration: 5,
+            angular_acceleration: 0.5,
             max_angular_speed: 0.2
         }
 
