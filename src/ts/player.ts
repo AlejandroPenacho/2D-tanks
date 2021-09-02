@@ -1,3 +1,5 @@
+import * as cls from "./collision";
+
 interface TankState {
     position: number[];
     speed: number;
@@ -26,14 +28,15 @@ export class Tank {
     stats: TankStats;
     keys: TankKeys;
     scene_dimensions: number[];
+    collision_blocks: cls.CircleCollider[];
 
-    constructor(keys: TankKeys, scene_dimensions: number[]){
+    constructor(position: number[], keys: TankKeys, scene_dimensions: number[]){
 
         let side_time = 6000;
         let acceleration_time = 200;
 
         this.state = {
-            position : [0, 0],
+            position : position,
             speed : 0,
             angle: 0,
             angular_speed: 0
@@ -47,12 +50,29 @@ export class Tank {
 
         this.keys = keys;
         this.scene_dimensions = scene_dimensions;
+
+        this.collision_blocks = [
+            new cls.CircleCollider(
+                () => {return this.state.position},
+                () => {return 15},
+                () => {return [this.state.speed*Math.cos(this.state.angle*Math.PI/180),
+                                this.state.speed*Math.sin(this.state.angle*Math.PI/180)]},
+                this.compute_collision
+            )
+        ]
     }
 
     shoot() {
         return new Bullet(  this.state.position, 
                             this.state.angle,
                             this.scene_dimensions)
+    }
+
+    compute_collision = (displacement: number[]) => {
+        this.state.speed = 0;
+        this.state.position = this.state.position.map((x, i) => {
+            return (x - displacement[i])
+        });
     }
 
     update_frame(time_step, pressed: Map<string, boolean>) {
