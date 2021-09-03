@@ -61,8 +61,7 @@ export class Tank {
                 () => {return this.state.position},
                 () => {return 10},
                 () => {return [this.state.speed*Math.cos(this.state.angle*Math.PI/180),
-                                this.state.speed*Math.sin(this.state.angle*Math.PI/180)]},
-                this.compute_collision
+                                this.state.speed*Math.sin(this.state.angle*Math.PI/180)]}
             )
         ]
     }
@@ -73,7 +72,7 @@ export class Tank {
                                 this.scene_dimensions)
     }
 
-    compute_collision = (displacement: number[]) => {
+    compute_collision (displacement: number[]) {
         this.state.speed = 0;
         this.state.position = this.state.position.map((x, i) => {
             return (x - displacement[i])
@@ -123,7 +122,7 @@ export class Projectile {
         this.angle = angle;
         this.velocity = [Math.cos, Math.sin].map((trig) => trig(angle*Math.PI/180)*scene_dimensions[0]/side_time);
         this.collision_elements = [
-            new cls.CircleCollider(()=> this.position, ()=> 5, ()=> this.velocity, this.compute_collision)
+            new cls.CircleCollider(()=> this.position, ()=> 5, ()=> this.velocity)
         ]
     }
 
@@ -138,7 +137,7 @@ export class Projectile {
             this.angle = Math.atan2(this.velocity[1], this.velocity[0])*180/Math.PI;
         })
     }
-    compute_collision = (displacement: number[]) => {
+    compute_collision(displacement: number[]) {
         this.state = ProjState.Dead;
     }
 }
