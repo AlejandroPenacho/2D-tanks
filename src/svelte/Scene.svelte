@@ -6,9 +6,13 @@
     import * as gm from "./../ts/game";
     import * as scn from "./../ts/scene";
 
-    let scene;
+    let view_port = [document.documentElement.clientWidth, document.documentElement.clientHeight];
+    let scene_dimensions = [1920, 1080];
+    let ratio = Math.min(view_port[0]/scene_dimensions[0], view_port[1]/scene_dimensions[1]);
+
+    
     let scene_dim = [508, 285.75];
-    let scene_offset = [0, 0];
+
 
     let player_list = [
             new ply.Tank([100,100], {
@@ -83,8 +87,6 @@
 
 <style>
     div.main {
-        height: 90vh;
-        width: 90vw;
         margin: auto;
         display: flex;
         align-items: center;
@@ -96,8 +98,8 @@
 
 <div class="main">
     <svg
-    width="{1920*0.5}"
-    height="{1080*0.5}"
+    width="{1920*ratio}"
+    height="{1080*ratio}"
     viewBox="0 0 508 285.75"
     version="1.1"
     id="svg5"
