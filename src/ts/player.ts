@@ -54,7 +54,7 @@ export class Tank {
         this.collision_blocks = [
             new cls.CircleCollider(
                 () => {return this.state.position},
-                () => {return 15},
+                () => {return 10},
                 () => {return [this.state.speed*Math.cos(this.state.angle*Math.PI/180),
                                 this.state.speed*Math.sin(this.state.angle*Math.PI/180)]},
                 this.compute_collision
@@ -63,9 +63,9 @@ export class Tank {
     }
 
     shoot() {
-        return new Bullet(  this.state.position, 
-                            this.state.angle,
-                            this.scene_dimensions)
+        return new Projectile(  this.state.position, 
+                                this.state.angle,
+                                this.scene_dimensions)
     }
 
     compute_collision = (displacement: number[]) => {
@@ -104,7 +104,7 @@ export class Tank {
     }
 }
 
-export class Bullet {
+export class Projectile {
     position: number[];
     velocity: number[];
     angle: number;

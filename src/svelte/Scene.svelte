@@ -3,11 +3,11 @@
     import Bullet from "/src/svelte/Bullet.svelte";
 
     import * as ply from "./../ts/player";
-    import * as cls from "./../ts/collision";
-    import { onMount } from "svelte";
+    import * as gm from "./../ts/game";
+    import * as scn from "./../ts/scene";
 
     let scene;
-    let scene_dim = [10000, 10000];
+    let scene_dim = [508, 285.75];
     let scene_offset = [0, 0];
 
     let player_list = [
@@ -18,7 +18,7 @@
                 left: "a",
                 shoot: " "
             }, scene_dim),
-            new ply.Tank([800,400], {
+            new ply.Tank([300,200], {
                 up: "ArrowUp",
                 right: "ArrowRight",
                 down: "ArrowDown",
@@ -26,39 +26,11 @@
                 shoot: "/"
             }, scene_dim)
         ]
-    let bullet_list = [];
-    let gravity_well_list = [
-        new ply.GravityWell([600, 600], 500)
-    ];
+    //let gravity_well_list = [
+    //    new ply.GravityWell([600, 600], 500)
+    //];
 
-    let scene_colliders = [];
-
-    onMount(()=> {
-        scene_dim = [scene.clientWidth, scene.clientHeight];
-        scene_offset = [scene.getBoundingClientRect().left, scene.getBoundingClientRect().top];
-        player_list = [
-            new ply.Tank( [100,100], {
-                up: "w",
-                down: "s",
-                right: "d",
-                left: "a",
-                shoot:" "
-            }, scene_dim),
-            new ply.Tank([800, 400], {
-                up: "ArrowUp",
-                right: "ArrowRight",
-                down: "ArrowDown",
-                left: "ArrowLeft",
-                shoot: "/"
-            }, scene_dim)
-        ];
-        scene_colliders = [
-            new cls.LineCollider(() => [0,0],               () => [scene_dim[0],0],             () => [0,0], () => {}),
-            new cls.LineCollider(() => [0,0],               () => [0,scene_dim[1]],             () => [0,0], () => {}),
-            new cls.LineCollider(() => [scene_dim[0],0],    () => [0,scene_dim[1]],             () => [0,0], () => {}),
-            new cls.LineCollider(() => [0,scene_dim[1]],    () => [scene_dim[0], 0],            () => [0,0], () => {})
-        ];
-    });
+    let game = new gm.Game(new scn.Scene, player_list);
 
 
     let key_pressed = new Map();
@@ -76,7 +48,7 @@
             key_pressed[e.key] = true;
             let shooter = shoot_keys.indexOf(e.key);
             if (shooter !== -1) {
-                bullet_list.push(player_list[shooter].shoot())
+                game.projectiles.push(player_list[shooter].shoot())
                 e.preventDefault();
 
             }
@@ -88,7 +60,6 @@
             key_pressed[e.key] = false;
         }
     }
-
 
     requestAnimationFrame(frame);
 
@@ -103,53 +74,59 @@
         time_step = time - frame_time;
         frame_time = time;
 
-        player_list.forEach((x) => {x.update_frame(time_step, key_pressed)});
-        bullet_list.forEach((x) => {x.get_gravity_influence(gravity_well_list, time_step);  x.update_frame(time_step, key_pressed)});
-        bullet_list = bullet_list.filter((x) => {
-            return !((x.position[0] < 0) || (x.position[0] > scene_dim[0]) || (x.position[1] < 0) || (x.position[1] > scene_dim[1]))
-        })
-        cls.compute_collision(player_list[0].collision_blocks[0], player_list[1].collision_blocks[0]);
-        scene_colliders.forEach((x) => {
-            cls.compute_collision(x, player_list[0].collision_blocks[0]),
-            cls.compute_collision(x, player_list[0].collision_blocks[0])
-        });
-        player_list = player_list;
+        game.get_frame(time_step, key_pressed);
+        game = game;
+
         requestAnimationFrame(frame);
     }
 </script>
 
 <style>
     div.main {
-        background-color: aqua;
         height: 90vh;
         width: 90vw;
         margin: auto;
-        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         -moz-user-select: none;
         -webkit-user-select: none;
-        cursor: none;
     }
 </style>
 
-<div class="main"
-     bind:this={scene} 
-     on:mousemove={(e) => {
-         gravity_well_list[0].position = [e.clientX-scene_offset[0], e.clientY-scene_offset[1]]
-         gravity_well_list = gravity_well_list;
-         }}>
-    {#each player_list as player}
-        <Player player={player}/>
+<div class="main">
+    <svg
+    width="{1920*0.5}"
+    height="{1080*0.5}"
+    viewBox="0 0 508 285.75"
+    version="1.1"
+    id="svg5"
+    xmlns="http://www.w3.org/2000/svg">
+    <defs
+      id="defs2" />
+   <g
+      id="layer1">
+     <rect
+        style="opacity:1;fill:#755e74;fill-opacity:1;stroke:#000000;stroke-width:4.257;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+        id="rect846"
+        width="507.45544"
+        height="285.15356"
+        x="0.36762181"
+        y="0.60322702" />
+     <rect
+        style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:4.257;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+        id="rect2174"
+        width="57.877335"
+        height="60.396374"
+        x="363.45953"
+        y="152.77066" />
+
+    {#each game.tanks as tank}
+        <Player player={tank} />
     {/each}
-    {#each bullet_list as bullet}
+    {#each game.projectiles as bullet}
         <Bullet bullet={bullet} />
     {/each}
-    {#each gravity_well_list as well}
-        <div style="height: 1cm; 
-                    width: 1cm; 
-                    position: absolute;
-                    transform: translate({well.position[0]}px, {well.position[1]}px) translate(-50%, -50%);
-                    background-color: red;
-                    border-radius: 5mm">
-        </div>
-    {/each}
+   </g>
+ </svg>
 </div>

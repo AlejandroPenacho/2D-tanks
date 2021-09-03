@@ -5,7 +5,7 @@ enum CollType {
 }
 
 
-class Collider {
+export class Collider {
     type: CollType;
 
     constructor(coll_type: CollType){
