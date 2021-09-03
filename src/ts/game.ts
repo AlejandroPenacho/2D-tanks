@@ -20,13 +20,26 @@ export class Game {
         this.tanks.forEach((x) => {x.update_frame(time_step, pressed_keys)});
         this.projectiles.forEach((x) => {x.get_gravity_influence(this.gravity_wells, time_step); x.update_frame(time_step)});
 
-        this.projectiles = this.projectiles.filter((x) => {
-            return !((x.position[0] < 0) || (x.position[0] > this.scenery.dimensions[0]) || (x.position[1] < 0) || (x.position[1] > this.scenery.dimensions[1]))
+        this.projectiles.forEach((projectile) => {
+            cls.compute_collision(projectile, this.scenery);
+            this.tanks.forEach((tank) => {
+                cls.compute_collision(projectile, tank);
+            })
         })
-        this.scenery.obstacles.forEach((x) => {
-            cls.compute_collision(x, this.tanks[0].collision_blocks[0]),
-            cls.compute_collision(x, this.tanks[1].collision_blocks[0])
+
+        this.projectiles = this.projectiles.filter((x) => {
+            return x.state == ply.ProjState.Alive;
+            // return !((x.position[0] < 0) || (x.position[0] > this.scenery.dimensions[0]) || (x.position[1] < 0) || (x.position[1] > this.scenery.dimensions[1]))
+        })
+        
+        this.tanks.forEach((tank) => {
+            cls.compute_collision(tank, this.scenery);
         });
-        cls.compute_collision(this.tanks[0].collision_blocks[0], this.tanks[1].collision_blocks[0]);
+
+        for (let i=0; i< (this.tanks.length-1); i++){
+            for (let j=i+1; j < this.tanks.length; j++){
+                cls.compute_collision(this.tanks[i], this.tanks[j]);
+            }
+        }
     }
 }

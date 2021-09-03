@@ -51,7 +51,15 @@ export class LineCollider extends Collider {
     }
 }
 
-export function compute_collision(element1: Collider, element2: Collider){
+export function compute_collision(x1, x2){
+    x1.collision_elements.forEach((x) => {
+        x2.collision_elements.forEach((y) => {
+            compute_element_collision(x, y);
+        })
+    })
+}
+
+function compute_element_collision(element1: Collider, element2: Collider){
 
     if (element1.type===CollType.Circle && element2.type===CollType.Circle){
             compute_circle_2_circle_collision(element1 as CircleCollider, element2 as CircleCollider);

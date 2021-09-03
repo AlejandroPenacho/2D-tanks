@@ -1,5 +1,10 @@
 import * as cls from "./collision";
 
+export enum ProjState {
+    Alive,
+    Dead
+}
+
 interface TankState {
     position: number[];
     speed: number;
@@ -28,7 +33,7 @@ export class Tank {
     stats: TankStats;
     keys: TankKeys;
     scene_dimensions: number[];
-    collision_blocks: cls.CircleCollider[];
+    collision_elements: cls.CircleCollider[];
 
     constructor(position: number[], keys: TankKeys, scene_dimensions: number[]){
 
@@ -51,7 +56,7 @@ export class Tank {
         this.keys = keys;
         this.scene_dimensions = scene_dimensions;
 
-        this.collision_blocks = [
+        this.collision_elements = [
             new cls.CircleCollider(
                 () => {return this.state.position},
                 () => {return 10},
@@ -105,15 +110,21 @@ export class Tank {
 }
 
 export class Projectile {
+    state: ProjState;
     position: number[];
     velocity: number[];
     angle: number;
+    collision_elements: cls.CircleCollider[];
 
     constructor(position, angle, scene_dimensions){
         let side_time = 1000;
+        this.state = ProjState.Alive
         this.position = position;
         this.angle = angle;
-        this.velocity = [Math.cos, Math.sin].map((trig) => trig(angle*Math.PI/180)*scene_dimensions[0]/side_time)
+        this.velocity = [Math.cos, Math.sin].map((trig) => trig(angle*Math.PI/180)*scene_dimensions[0]/side_time);
+        this.collision_elements = [
+            new cls.CircleCollider(()=> this.position, ()=> 5, ()=> this.velocity, this.compute_collision)
+        ]
     }
 
     update_frame(time_step){
@@ -126,6 +137,9 @@ export class Projectile {
             this.velocity[1] += time_step * x.strength * (x.position[1] - this.position[1])/denominator;
             this.angle = Math.atan2(this.velocity[1], this.velocity[0])*180/Math.PI;
         })
+    }
+    compute_collision = (displacement: number[]) => {
+        this.state = ProjState.Dead;
     }
 }
 
