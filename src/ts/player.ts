@@ -10,6 +10,7 @@ interface TankState {
     speed: number;
     angle: number;
     angular_speed: number;
+    health: number;
 }
 
 interface TankStats {
@@ -29,6 +30,7 @@ interface TankKeys {
 
 
 export class Tank {
+    object_type: string;
     state: TankState;
     stats: TankStats;
     keys: TankKeys;
@@ -36,6 +38,7 @@ export class Tank {
     collision_elements: cls.CircleCollider[];
 
     constructor(position: number[], keys: TankKeys, scene_dimensions: number[]){
+        this.object_type = "tank";
 
         let side_time = 6000;
         let acceleration_time = 200;
@@ -44,7 +47,8 @@ export class Tank {
             position : position,
             speed : 0,
             angle: 0,
-            angular_speed: 0
+            angular_speed: 0,
+            health: 100
         };
         this.stats = {
             max_speed: scene_dimensions[0]/side_time,
@@ -72,7 +76,12 @@ export class Tank {
                                 this.scene_dimensions)
     }
 
-    compute_collision (displacement: number[]) {
+    compute_collision (collided_type: string, displacement: number[]) {
+        if (collided_type === "projectile"){
+            this.state.health -= 20;
+            console.log(this.state.health)
+            return 
+        }
         this.state.speed = 0;
         this.state.position = this.state.position.map((x, i) => {
             return (x - displacement[i])
@@ -109,6 +118,7 @@ export class Tank {
 }
 
 export class Projectile {
+    object_type: string;
     state: ProjState;
     position: number[];
     velocity: number[];
@@ -116,6 +126,7 @@ export class Projectile {
     collision_elements: cls.CircleCollider[];
 
     constructor(position, angle, scene_dimensions){
+        this.object_type = "projectile";
         let side_time = 1000;
         this.state = ProjState.Alive
         this.position = position;
@@ -137,7 +148,7 @@ export class Projectile {
             this.angle = Math.atan2(this.velocity[1], this.velocity[0])*180/Math.PI;
         })
     }
-    compute_collision(displacement: number[]) {
+    compute_collision(collided_type: string, displacement: number[]) {
         this.state = ProjState.Dead;
     }
 }

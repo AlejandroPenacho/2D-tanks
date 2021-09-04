@@ -50,8 +50,8 @@ export function compute_collision(x1, x2){
         x2.collision_elements.forEach((y) => {
             let [collision, displacement] = compute_element_collision(x, y);
             if (collision){
-                x1.compute_collision(displacement);
-                x2.compute_collision([-displacement[0], -displacement[1]]);
+                x1.compute_collision(x2.object_type, displacement);
+                x2.compute_collision(x1.object_type, [-displacement[0], -displacement[1]]);
             }
         })
     })

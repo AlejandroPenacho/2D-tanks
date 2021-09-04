@@ -17,9 +17,30 @@ export class Game {
     }
 
     get_frame(time_step: number, pressed_keys: Map<string, boolean>){
-        this.tanks.forEach((x) => {x.update_frame(time_step, pressed_keys)});
-        this.projectiles.forEach((x) => {x.get_gravity_influence(this.gravity_wells, time_step); x.update_frame(time_step)});
 
+        this.update_objects(time_step, pressed_keys);
+        this.compute_all_collision();
+
+
+        this.projectiles = this.projectiles.filter((x) => {
+            return x.state == ply.ProjState.Alive;
+        })
+        
+        this.tanks = this.tanks.map((tank) => {
+            if (tank.state.health <= 0){
+                return new ply.Tank([100,100], tank.keys, this.scenery.dimensions)
+            } else {
+                return tank
+            }
+        })
+
+
+    }
+
+
+    compute_all_collision(){
+
+        // Collisions of projectiles with others
         this.projectiles.forEach((projectile) => {
             cls.compute_collision(projectile, this.scenery);
             this.tanks.forEach((tank) => {
@@ -27,19 +48,22 @@ export class Game {
             })
         })
 
-        this.projectiles = this.projectiles.filter((x) => {
-            return x.state == ply.ProjState.Alive;
-            // return !((x.position[0] < 0) || (x.position[0] > this.scenery.dimensions[0]) || (x.position[1] < 0) || (x.position[1] > this.scenery.dimensions[1]))
-        })
-        
+        // Collisions of tanks with scenenery
         this.tanks.forEach((tank) => {
             cls.compute_collision(tank, this.scenery);
         });
 
+        // Collisions between tanks
         for (let i=0; i< (this.tanks.length-1); i++){
             for (let j=i+1; j < this.tanks.length; j++){
                 cls.compute_collision(this.tanks[i], this.tanks[j]);
             }
         }
     }
+
+    update_objects(time_step, pressed_keys){
+        this.tanks.forEach((x) => {x.update_frame(time_step, pressed_keys)});
+        this.projectiles.forEach((x) => {x.get_gravity_influence(this.gravity_wells, time_step); x.update_frame(time_step)});
+    }
+
 }

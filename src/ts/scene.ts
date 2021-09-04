@@ -1,10 +1,12 @@
 import * as cls from "./collision";
 
 export class Scene {
+    object_type: string;
     collision_elements: cls.Collider[];
     dimensions: number[];
 
     constructor(){
+        this.object_type = "scene";
         this.dimensions = [508, 285.75];
         let block_0  = [363.45953, 152.77066];
         let dim_0 = [57.877335, 60.396374];
