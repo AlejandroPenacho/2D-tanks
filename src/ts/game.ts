@@ -23,7 +23,7 @@ export class Game {
 
 
         this.projectiles = this.projectiles.filter((x) => {
-            return x.state == ply.ProjState.Alive;
+            return x.state !== ply.ProjState.Dead;
         })
         
         this.tanks = this.tanks.map((tank) => {

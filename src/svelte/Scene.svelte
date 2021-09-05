@@ -52,10 +52,16 @@
             key_pressed[e.key] = true;
             let shooter = shoot_keys.indexOf(e.key);
             if (shooter !== -1) {
-                game.projectiles.push(player_list[shooter].shoot())
+                let [canShoot, projectile] = game.tanks[shooter].shoot();
+                if (canShoot){
+                    game.projectiles.push(projectile);
+                }
                 e.preventDefault();
-
             }
+        }
+
+        if (e.key === "o"){
+            console.log(game.tanks)
         }
     }
 

@@ -2,7 +2,9 @@ import * as cls from "./collision";
 
 export enum ProjState {
     Alive,
-    Dead
+    Dead,
+    Bouncing,
+    Laying
 }
 
 interface TankState {
@@ -33,6 +35,7 @@ export class Tank {
     object_type: string;
     state: TankState;
     stats: TankStats;
+    ammo: number;
     keys: TankKeys;
     scene_dimensions: number[];
     collision_elements: cls.CircleCollider[];
@@ -42,6 +45,8 @@ export class Tank {
 
         let side_time = 6000;
         let acceleration_time = 200;
+
+        this.ammo = 8;
 
         this.state = {
             position : position,
@@ -70,18 +75,31 @@ export class Tank {
         ]
     }
 
-    shoot() {
-        return new Projectile(  this.state.position, 
-                                this.state.angle,
-                                this.scene_dimensions)
+    shoot(): [boolean, Projectile] {
+        if (this.ammo !== 0){
+            this.ammo = this.ammo - 1;
+            return [true, new Projectile(   this.state.position, 
+                                            this.state.angle,
+                                            this.scene_dimensions)
+            ]
+        } else {
+            return [false, new Projectile(  this.state.position, 
+                                            this.state.angle,
+                                            this.scene_dimensions)
+            ]
+        }
     }
 
     compute_collision (collided_type: string, displacement: number[]) {
         if (collided_type === "projectile"){
             this.state.health -= 20;
-            console.log(this.state.health)
             return 
         }
+        if (collided_type === "off_projectile"){
+            this.ammo = this.ammo + 1;
+            return
+        }
+
         this.state.speed = 0;
         this.state.position = this.state.position.map((x, i) => {
             return (x - displacement[i])
@@ -140,6 +158,7 @@ export class Projectile {
     update_frame(time_step){
         this.position = this.position.map((x,i) => {return (x + this.velocity[i]*time_step)})
     }
+
     get_gravity_influence(gravity_well_list: GravityWell[], time_step: number){
         gravity_well_list.forEach((x) => {
             let denominator = Math.pow(Math.pow(this.position[0] - x.position[0], 2) + Math.pow(this.position[1] - x.position[1], 2),3/2);
@@ -149,7 +168,26 @@ export class Projectile {
         })
     }
     compute_collision(collided_type: string, displacement: number[]) {
-        this.state = ProjState.Dead;
+
+        if (this.state === ProjState.Alive){
+            if (collided_type === "tank"){
+                this.state = ProjState.Dead;
+            } else if (collided_type === "scene") {
+                this.state = ProjState.Laying
+                this.object_type = "off_projectile"
+                this.position = this.position.map((x,i) => x - 4*displacement[i])
+                this.velocity = [0, 0]
+            }
+        }
+
+        if (this.state === ProjState.Laying) {
+            if (collided_type === "tank"){
+                this.state = ProjState.Dead
+            }
+        }
+
+
+
     }
 }
 
