@@ -2,6 +2,9 @@ import * as cls from "./collision";
 
 export class Scene extends cls.CollidableObject{
     dimensions: number[];
+    split_screen: boolean;
+    window_size: number[];
+    spawn_points: [number, number][];
 
     constructor(){
 
@@ -15,10 +18,12 @@ export class Scene extends cls.CollidableObject{
         ]);
 
         this.dimensions = dimensions;
-
+        this.spawn_points = [[30, 30], [180, 130]];
 
     }
+
     compute_collision(collision_data, displacement: number[]) {
         
     }
+
 }

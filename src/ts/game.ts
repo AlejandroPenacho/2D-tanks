@@ -29,13 +29,22 @@ export class Game {
         
         this.tanks = this.tanks.map((tank) => {
             if (tank.state.health <= 0){
-                return new tnk.Tank([100,100], tank.keys, this.scenery.dimensions)
+                return new tnk.Tank(this.get_best_spawn(), tank.keys, this.scenery.dimensions)
             } else {
                 return tank
             }
         })
+    }
 
-
+    get_best_spawn(): [number, number]{
+        let min_distance = this.scenery.spawn_points.map((point) => {
+            let all_distances: number[] = this.tanks.map((tank) => {
+                return get_distance(point, tank.state.position);
+            })
+            return Math.min(...all_distances)
+        });
+        console.log(min_distance)
+        return this.scenery.spawn_points[min_distance.indexOf(Math.max(...min_distance))];
     }
 
 
@@ -67,4 +76,9 @@ export class Game {
         this.projectiles.forEach((x) => {x.get_gravity_influence(this.gravity_wells, time_step); x.update_frame(time_step)});
     }
 
+}
+
+
+function get_distance(x_0: number[], x_1: number[]): number{
+    return Math.pow(Math.pow(x_0[0]-x_1[0], 2) + Math.pow(x_0[1]-x_1[1], 2),0.5)
 }
