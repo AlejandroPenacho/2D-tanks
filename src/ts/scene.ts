@@ -11,11 +11,12 @@ export class Scene {
         let block_0  = [363.45953, 152.77066];
         let dim_0 = [57.877335, 60.396374];
         this.collision_elements = [
-            new cls.RectangleCollider(() => this.dimensions.map((x)=> x/2), () => this.dimensions, cls.RectType.Interior),
-            new cls.LineCollider(() => block_0,                             () => [dim_0[0],0],     () => [0,0]),
-            new cls.LineCollider(() => block_0,                             () => [0,dim_0[1]],     () => [0,0]),
-            new cls.LineCollider(() => [block_0[0]+dim_0[0], block_0[1]],   () => [0,dim_0[1]],     () => [0,0]),
-            new cls.LineCollider(() => [block_0[0], block_0[1]+dim_0[1]],   () => [dim_0[0],0],     () => [0,0]),
+            new cls.RectangleCollider(() => this.dimensions.map((x)=> x/2), () => this.dimensions, cls.RectType.Exterior),
+            new cls.RectangleCollider(() => [392.398, 182.968], ()=> [57.877335, 60.396374], cls.RectType.Interior)
+//             new cls.LineCollider(() => block_0,                             () => [dim_0[0],0],     () => [0,0]),
+//             new cls.LineCollider(() => block_0,                             () => [0,dim_0[1]],     () => [0,0]),
+//             new cls.LineCollider(() => [block_0[0]+dim_0[0], block_0[1]],   () => [0,dim_0[1]],     () => [0,0]),
+//             new cls.LineCollider(() => [block_0[0], block_0[1]+dim_0[1]],   () => [dim_0[0],0],     () => [0,0]),
         ]
     }
     compute_collision(displacement: number[]) {
