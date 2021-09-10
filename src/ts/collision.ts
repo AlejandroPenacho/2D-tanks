@@ -1,7 +1,14 @@
+import { xlink_attr } from "svelte/internal";
 
 enum CollType {
     Line,
-    Circle
+    Circle,
+    Rectangle
+}
+
+export enum RectType {
+    Interior,
+    Exterior
 }
 
 
@@ -45,6 +52,19 @@ export class LineCollider extends Collider {
     }
 }
 
+export class RectangleCollider extends Collider {
+    rect_type: RectType;
+    x_c: () => number[];
+    dimensions: () => number[];
+    
+    constructor(x_c: () => number[], dimensions: () => number[], rectangle_type: RectType) {
+        super(CollType.Rectangle)
+        this.rect_type = rectangle_type;
+        this.x_c = x_c;
+        this.dimensions = dimensions;
+    }
+}
+
 export function compute_collision(x1, x2){
     x1.collision_elements.forEach((x) => {
         x2.collision_elements.forEach((y) => {
@@ -65,12 +85,21 @@ function compute_element_collision(element1: Collider, element2: Collider){
     else if (element1.type===CollType.Circle && element2.type===CollType.Line){
         let [collision, displacement] = compute_line_2_circle_collision(element2 as LineCollider, element1 as CircleCollider);
         return [collision, [-displacement[0], -displacement[1]]]
-    }    
+    }
     else if (element1.type===CollType.Line && element2.type===CollType.Circle) {
         return compute_line_2_circle_collision(element1 as LineCollider, element2 as CircleCollider);
-    } else {
+    } 
+    else if (element1.type===CollType.Rectangle && element2.type===CollType.Circle){
+        let [collision, displacement] = compute_rectangle_2_circle_collision(element1 as RectangleCollider, element2 as CircleCollider)
+        return [collision, [-displacement[0], -displacement[1]]]
+    }
+    else if (element1.type===CollType.Circle && element2.type===CollType.Rectangle){
+        return compute_rectangle_2_circle_collision(element2 as RectangleCollider, element1 as CircleCollider)
+    }
+    else {
         return [false, 0]
     }
+
     
 
 
@@ -116,6 +145,46 @@ function compute_line_2_circle_collision(line: LineCollider, circle: CircleColli
 
     return [true, normal_vector.map((x) => x*displacement)];
 
+}
+
+function compute_rectangle_2_circle_collision(rectangle: RectangleCollider, circle: CircleCollider): [boolean, number[]]{
+    
+    if (rectangle.rect_type === RectType.Interior){
+        return (compute_interior_rectangle_2_circle_collision(rectangle, circle));
+    } else {
+        return (compute_exterior_rectangle_2_circle_collision(rectangle, circle));
+    }
+}
+
+function compute_interior_rectangle_2_circle_collision(rectangle: RectangleCollider, circle: CircleCollider): [boolean, number[]]{
+
+    let [d_x, d_y] = [circle.center()[0] - rectangle.x_c()[0], circle.center()[1] - rectangle.x_c()[1]];
+    let [horizontal_sign, vertical_sign] = [d_x, d_y].map(Math.sign);
+    
+    let distance_to_border: number[] = [0, 0];
+
+    distance_to_border[0] = d_x - horizontal_sign * (rectangle.dimensions()[0]/2 - circle.radius());
+    distance_to_border[1] = d_y - vertical_sign * (rectangle.dimensions()[1]/2 - circle.radius());
+
+    let displacement = [0, 0];
+
+    if (Math.sign(distance_to_border[0]) === Math.sign(horizontal_sign)){
+        displacement[0] = distance_to_border[0];
+    }
+    if (Math.sign(distance_to_border[1]) === Math.sign(vertical_sign)){
+        displacement[1] = distance_to_border[1];
+    }
+
+    if ((displacement[0] !== 0) || (displacement[1] !== 0)){
+        return [true, displacement]
+    } else {
+        return [false, [0,0]]
+    }
+
+}
+
+function compute_exterior_rectangle_2_circle_collision(rectangle: RectangleCollider, circle: CircleCollider): [boolean, number[]]{
+    return [false, [0, 0]]
 }
 
 function get_distance(x_0: number[], x_1: number[]){
