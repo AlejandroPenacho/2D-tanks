@@ -1,5 +1,3 @@
-import { xlink_attr } from "svelte/internal";
-
 enum CollType {
     Line,
     Circle,
@@ -17,6 +15,20 @@ export class Collider {
 
     constructor(coll_type: CollType){
         this.type = coll_type;
+    }
+}
+
+export class CollidableObject{
+    collider_elements: Collider[];
+    collision_data: any;
+
+    constructor(collision_data, collider_elements: Collider[]){
+        this.collision_data = collision_data;
+        this.collider_elements = collider_elements;
+    }
+
+    compute_collision(collided_data: any, displacement: number[]){
+
     }
 }
 
@@ -66,12 +78,12 @@ export class RectangleCollider extends Collider {
 }
 
 export function compute_collision(x1, x2){
-    x1.collision_elements.forEach((x) => {
-        x2.collision_elements.forEach((y) => {
+    x1.collider_elements.forEach((x) => {
+        x2.collider_elements.forEach((y) => {
             let [collision, displacement] = compute_element_collision(x, y);
             if (collision){
-                x1.compute_collision(x2.object_type, displacement);
-                x2.compute_collision(x1.object_type, [-displacement[0], -displacement[1]]);
+                x1.compute_collision(x2.collision_data, displacement);
+                x2.compute_collision(x1.collision_data, [-displacement[0], -displacement[1]]);
             }
         })
     })
@@ -99,9 +111,6 @@ function compute_element_collision(element1: Collider, element2: Collider){
     else {
         return [false, 0]
     }
-
-    
-
 
 }
 

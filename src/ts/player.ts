@@ -31,17 +31,22 @@ interface TankKeys {
 }
 
 
-export class Tank {
-    object_type: string;
+export class Tank extends cls.CollidableObject {
     state: TankState;
     stats: TankStats;
     ammo: number;
     keys: TankKeys;
     scene_dimensions: number[];
-    collision_elements: cls.CircleCollider[];
 
     constructor(position: number[], keys: TankKeys, scene_dimensions: number[]){
-        this.object_type = "tank";
+        
+        super({object_type: "tank"}, [
+            new cls.CircleCollider(
+            () => {return this.state.position},
+            () => {return 10},
+            () => {return [this.state.speed*Math.cos(this.state.angle*Math.PI/180),
+                            this.state.speed*Math.sin(this.state.angle*Math.PI/180)]}
+        )]);
 
         let side_time = 6000;
         let acceleration_time = 200;
@@ -65,14 +70,6 @@ export class Tank {
         this.keys = keys;
         this.scene_dimensions = scene_dimensions;
 
-        this.collision_elements = [
-            new cls.CircleCollider(
-                () => {return this.state.position},
-                () => {return 10},
-                () => {return [this.state.speed*Math.cos(this.state.angle*Math.PI/180),
-                                this.state.speed*Math.sin(this.state.angle*Math.PI/180)]}
-            )
-        ]
     }
 
     shoot(): [boolean, Projectile] {
@@ -90,12 +87,12 @@ export class Tank {
         }
     }
 
-    compute_collision (collided_type: string, displacement: number[]) {
-        if (collided_type === "projectile"){
+    compute_collision (collided_data, displacement: number[]) {
+        if (collided_data.object_type === "projectile"){
             this.state.health -= 20;
             return 
         }
-        if (collided_type === "off_projectile"){
+        if (collided_data.object_type === "off_projectile"){
             this.ammo = this.ammo + 1;
             return
         }
@@ -135,24 +132,23 @@ export class Tank {
     }
 }
 
-export class Projectile {
-    object_type: string;
+export class Projectile extends cls.CollidableObject {
     state: ProjState;
     position: number[];
     velocity: number[];
     angle: number;
-    collision_elements: cls.CircleCollider[];
 
     constructor(position, angle, scene_dimensions){
-        this.object_type = "projectile";
+
+        super({object_type: "projectile"}, [
+            new cls.CircleCollider(()=> this.position, ()=> 5, ()=> this.velocity)
+        ]);
+
         let side_time = 1000;
         this.state = ProjState.Alive
         this.position = position;
         this.angle = angle;
         this.velocity = [Math.cos, Math.sin].map((trig) => trig(angle*Math.PI/180)*scene_dimensions[0]/side_time);
-        this.collision_elements = [
-            new cls.CircleCollider(()=> this.position, ()=> 5, ()=> this.velocity)
-        ]
     }
 
     update_frame(time_step){
@@ -167,21 +163,21 @@ export class Projectile {
             this.angle = Math.atan2(this.velocity[1], this.velocity[0])*180/Math.PI;
         })
     }
-    compute_collision(collided_type: string, displacement: number[]) {
+    compute_collision(collided_data: any, displacement: number[]) {
 
         if (this.state === ProjState.Alive){
-            if (collided_type === "tank"){
+            if (collided_data.object_type === "tank"){
                 this.state = ProjState.Dead;
-            } else if (collided_type === "scene") {
+            } else if (collided_data.object_type === "scene") {
                 this.state = ProjState.Laying
-                this.object_type = "off_projectile"
+                this.collision_data.object_type = "off_projectile"
                 this.position = this.position.map((x,i) => x - 4*displacement[i])
                 this.velocity = [0, 0]
             }
         }
 
         if (this.state === ProjState.Laying) {
-            if (collided_type === "tank"){
+            if (collided_data.object_type === "tank"){
                 this.state = ProjState.Dead
             }
         }
