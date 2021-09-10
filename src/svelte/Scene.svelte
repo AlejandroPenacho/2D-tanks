@@ -7,7 +7,7 @@
     import * as scn from "./../ts/scene";
 
     let view_port = [document.documentElement.clientWidth, document.documentElement.clientHeight];
-    let scene_dimensions = [1920, 1080];
+    let scene_dimensions = [200, 150];
     let ratio = Math.min(view_port[0]/scene_dimensions[0], view_port[1]/scene_dimensions[1]);
 
     
@@ -15,14 +15,14 @@
 
 
     let player_list = [
-            new ply.Tank([100,100], {
+            new ply.Tank([50,50], {
                 up: "w",
                 down: "s",
                 right: "d",
                 left: "a",
                 shoot: " "
             }, scene_dim),
-            new ply.Tank([300,200], {
+            new ply.Tank([100,50], {
                up: "ArrowUp",
                right: "ArrowRight",
                down: "ArrowDown",
@@ -61,7 +61,7 @@
         }
 
         if (e.key === "o"){
-            console.log(game.tanks)
+            console.log(game.tanks[0].state.position)
         }
     }
 
@@ -104,37 +104,33 @@
 
 <div class="main">
     <svg
-    width="{1920*ratio}"
-    height="{1080*ratio}"
-    viewBox="0 0 508 285.75"
+    width="{200*ratio}"
+    height="{150*ratio}"
+    viewBox="0 0 200 150"
     version="1.1"
     id="svg5"
     xmlns="http://www.w3.org/2000/svg">
-    <defs
+   <defs
       id="defs2" />
-   <g
-      id="layer1">
-     <rect
-        style="opacity:1;fill:#755e74;fill-opacity:1;stroke:#000000;stroke-width:4.257;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
-        id="rect846"
-        width="507.45544"
-        height="285.15356"
-        x="0.36762181"
-        y="0.60322702" />
-     <rect
-        style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:4.257;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
-        id="rect2174"
-        width="57.877335"
-        height="60.396374"
-        x="363.45953"
-        y="152.77066" />
-
+   <rect
+      style="opacity:1;fill:#91c169;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+      id="rect2885"
+      width="200.13882"
+      height="150.09895"
+      x="-0.020740176"
+      y="0.066525087" />
+   <rect
+      style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.47377;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+      id="rect3231"
+      width="31.09374"
+      height="32.512115"
+      x="130.07704"
+      y="83.012444" />
     {#each game.tanks as tank}
         <Player player={tank} />
     {/each}
     {#each game.projectiles as bullet}
         <Bullet bullet={bullet} />
     {/each}
-   </g>
  </svg>
 </div>

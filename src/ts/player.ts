@@ -43,7 +43,7 @@ export class Tank extends cls.CollidableObject {
         super({object_type: "tank"}, [
             new cls.CircleCollider(
             () => {return this.state.position},
-            () => {return 10},
+            () => {return 4},
             () => {return [this.state.speed*Math.cos(this.state.angle*Math.PI/180),
                             this.state.speed*Math.sin(this.state.angle*Math.PI/180)]}
         )]);
@@ -149,7 +149,7 @@ export class Projectile extends cls.CollidableObject {
     constructor(position, angle, scene_dimensions){
 
         super({object_type: "projectile"}, [
-            new cls.CircleCollider(()=> this.position, ()=> 5, ()=> this.velocity)
+            new cls.CircleCollider(()=> this.position, ()=> 3, ()=> this.velocity)
         ]);
 
         let side_time = 1000;

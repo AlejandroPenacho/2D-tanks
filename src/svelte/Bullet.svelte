@@ -4,33 +4,14 @@
 
 
 <svg
-   width="30"
-   height="30"
+   width="10"
+   height="10"
    viewBox="0 0 100 100"
-   transform="translate({bullet.position[0]-15}, {bullet.position[1]-15}) rotate({bullet.angle}, 15,15)"
+   transform="translate({bullet.position[0]-5}, {bullet.position[1]-5}) rotate({bullet.angle}, 5,5)"
    version="1.1"
    id="svg5"
    xmlns="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview7"
-     pagecolor="#505050"
-     bordercolor="#ffffff"
-     borderopacity="1"
-     inkscape:pageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="1"
-     inkscape:document-units="mm"
-     showgrid="false"
-     width="100mm"
-     inkscape:zoom="1.9099888"
-     inkscape:cx="136.65002"
-     inkscape:cy="186.91209"
-     inkscape:window-width="1920"
-     inkscape:window-height="1052"
-     inkscape:window-x="1366"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g1497" />
+
   <defs
      id="defs2" />
   <g

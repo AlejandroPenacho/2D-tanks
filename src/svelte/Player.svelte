@@ -5,33 +5,13 @@
 
 
 <svg
-   width="30"
-   height="30"
+   width="10"
+   height="10"
+   transform="translate({player.state.position[0]-5}, {player.state.position[1]-5}) rotate({player.state.angle}, 5,5)"
    viewBox="0 0 100 100"
-   transform="translate({player.state.position[0]-15}, {player.state.position[1]-15}) rotate({player.state.angle}, 15,15)"
    version="1.1"
    id="svg5"
    xmlns="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview7"
-     pagecolor="#505050"
-     bordercolor="#ffffff"
-     borderopacity="1"
-     inkscape:pageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="1"
-     inkscape:document-units="mm"
-     showgrid="false"
-     width="100mm"
-     inkscape:zoom="0.95499439"
-     inkscape:cx="186.38853"
-     inkscape:cy="231.41497"
-     inkscape:window-width="1366"
-     inkscape:window-height="700"
-     inkscape:window-x="0"
-     inkscape:window-y="774"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
   <defs
      id="defs2" />
   <g

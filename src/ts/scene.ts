@@ -5,9 +5,9 @@ export class Scene extends cls.CollidableObject{
 
     constructor(){
 
-        let dimensions = [508, 285.75];
-        let block_0  = [363.45953, 152.77066];
-        let dim_0 = [57.877335, 60.396374];
+        let dimensions = [200, 150];
+        let block_0  = [130, 83];
+        let dim_0 = [31.09, 32.5];
 
         super({object_type: "scene"}, [
             cls.rectangle_from_svg([0, 0], dimensions, cls.RectType.Exterior),
