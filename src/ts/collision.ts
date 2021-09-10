@@ -161,23 +161,16 @@ function compute_exterior_rectangle_2_circle_collision(rectangle: RectangleColli
     let [d_x, d_y] = [circle.center()[0] - rectangle.x_c()[0], circle.center()[1] - rectangle.x_c()[1]];
     let [horizontal_sign, vertical_sign] = [d_x, d_y].map(Math.sign);
     
-    let distance_to_border: number[] = [0, 0];
+    let distance_to_border: number[] = [Math.abs(d_x)-(rectangle.dimensions()[0]/2 - circle.radius()), 
+                                        Math.abs(d_y)-(rectangle.dimensions()[1]/2 - circle.radius())];
 
-    distance_to_border[0] = d_x - horizontal_sign * (rectangle.dimensions()[0]/2 - circle.radius());
-    distance_to_border[1] = d_y - vertical_sign * (rectangle.dimensions()[1]/2 - circle.radius());
-
-    let displacement = [0, 0];
-
-
-    if (Math.sign(distance_to_border[0]) === Math.sign(horizontal_sign)){
-        displacement[0] = distance_to_border[0];
-    }
-    if (Math.sign(distance_to_border[1]) === Math.sign(vertical_sign)){
-        displacement[1] = distance_to_border[1];
-    }
+    let displacement = [
+        Math.max(0, distance_to_border[0]),
+        Math.max(0, distance_to_border[1])
+    ]
 
     if ((displacement[0] !== 0) || (displacement[1] !== 0)){
-        return [true, displacement]
+        return [true, [displacement[0]*horizontal_sign, displacement[1]*vertical_sign]]
     } else {
         return [false, [0,0]]
     }
