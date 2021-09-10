@@ -77,6 +77,15 @@ export class RectangleCollider extends Collider {
     }
 }
 
+export function rectangle_from_svg(x_corner: number[], dimensions: number[], rectangle_type: RectType){
+    let center = [
+        x_corner[0] + dimensions[0]/2,
+        x_corner[1] + dimensions[1]/2
+    ]
+
+    return new RectangleCollider(()=> center, () => dimensions, rectangle_type);
+}
+
 export function compute_collision(x1, x2){
     x1.collider_elements.forEach((x) => {
         x2.collider_elements.forEach((y) => {
@@ -218,7 +227,7 @@ function compute_interior_rectangle_2_circle_collision(rectangle: RectangleColli
     if (penetration[0] < penetration[1]){
         return [true, [-horizontal_sign*penetration[0], 0]]
     } else {
-        return [true, [-vertical_sign*penetration[1], penetration[1]]]
+        return [true, [0, -vertical_sign*penetration[1]]]
     }
     
 

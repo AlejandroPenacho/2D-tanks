@@ -22,13 +22,13 @@
                 left: "a",
                 shoot: " "
             }, scene_dim),
-//            new ply.Tank([300,200], {
-//                up: "ArrowUp",
-//                right: "ArrowRight",
-//                down: "ArrowDown",
-//                left: "ArrowLeft",
-//                shoot: "/"
-//            }, scene_dim)
+            new ply.Tank([300,200], {
+               up: "ArrowUp",
+               right: "ArrowRight",
+               down: "ArrowDown",
+               left: "ArrowLeft",
+               shoot: "/"
+           }, scene_dim)
         ]
     //let gravity_well_list = [
     //    new ply.GravityWell([600, 600], 500)
