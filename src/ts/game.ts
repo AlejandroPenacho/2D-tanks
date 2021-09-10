@@ -1,15 +1,16 @@
-import * as ply from "./player";
+import * as tnk from "./tank";
+import * as pjl from "./projectile";
 import * as scn from "./scene";
 import * as cls from "./collision";
 
 
 export class Game {
-    tanks: ply.Tank[];
+    tanks: tnk.Tank[];
     scenery: scn.Scene;
-    projectiles: ply.Projectile[];
-    gravity_wells: ply.GravityWell[];
+    projectiles: pjl.Projectile[];
+    gravity_wells: tnk.GravityWell[];
 
-    constructor(scenery: scn.Scene, tanks: ply.Tank[]){
+    constructor(scenery: scn.Scene, tanks: tnk.Tank[]){
         this.tanks = tanks;
         this.scenery = scenery;
         this.projectiles = [];
@@ -23,12 +24,12 @@ export class Game {
 
 
         this.projectiles = this.projectiles.filter((x) => {
-            return x.state !== ply.ProjState.Dead;
+            return x.state !== pjl.ProjState.Dead;
         })
         
         this.tanks = this.tanks.map((tank) => {
             if (tank.state.health <= 0){
-                return new ply.Tank([100,100], tank.keys, this.scenery.dimensions)
+                return new tnk.Tank([100,100], tank.keys, this.scenery.dimensions)
             } else {
                 return tank
             }

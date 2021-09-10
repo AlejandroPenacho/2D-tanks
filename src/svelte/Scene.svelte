@@ -2,7 +2,7 @@
     import Player from "/src/svelte/Player.svelte";
     import Bullet from "/src/svelte/Bullet.svelte";
 
-    import * as ply from "./../ts/player";
+    import * as tnk from "./../ts/tank";
     import * as gm from "./../ts/game";
     import * as scn from "./../ts/scene";
 
@@ -15,14 +15,14 @@
 
 
     let player_list = [
-            new ply.Tank([50,50], {
+            new tnk.Tank([50,50], {
                 up: "w",
                 down: "s",
                 right: "d",
                 left: "a",
                 shoot: " "
             }, scene_dim),
-            new ply.Tank([100,50], {
+            new tnk.Tank([100,50], {
                up: "ArrowUp",
                right: "ArrowRight",
                down: "ArrowDown",
