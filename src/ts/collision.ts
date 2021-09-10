@@ -212,8 +212,10 @@ function compute_interior_rectangle_2_circle_collision(rectangle: RectangleColli
         } else {
             let delta_x = [circle.radius()-Math.abs(displacement[0]), circle.radius()-Math.abs(displacement[1])];
             let distance_to_corner = Math.pow(Math.pow(delta_x[0],2)+Math.pow(delta_x[1],2),0.5);
+            let expansion = circle.radius() - distance_to_corner;
 
-            return [true, [-horizontal_sign*delta_x[0]/distance_to_corner, -vertical_sign*delta_x[1]/distance_to_corner]]
+            return [true, [-horizontal_sign*expansion*delta_x[0]/distance_to_corner, -vertical_sign*expansion*delta_x[1]/distance_to_corner]]
+
         }
     }
 
