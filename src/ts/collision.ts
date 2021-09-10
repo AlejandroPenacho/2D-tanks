@@ -182,40 +182,34 @@ function compute_interior_rectangle_2_circle_collision(rectangle: RectangleColli
     let [d_x, d_y] = [circle.center()[0] - rectangle.x_c()[0], circle.center()[1] - rectangle.x_c()[1]];
     let [horizontal_sign, vertical_sign] = [d_x, d_y].map(Math.sign);
 
-    let distance_to_border: number[] = [0, 0];
-    distance_to_border[0] = d_x - horizontal_sign * (rectangle.dimensions()[0]/2 + circle.radius());
-    distance_to_border[1] = d_y - vertical_sign * (rectangle.dimensions()[1]/2 + circle.radius());
+    let distance_to_border: number[] = [Math.abs(d_x)-(rectangle.dimensions()[0]/2 + circle.radius()), 
+                                        Math.abs(d_y)-(rectangle.dimensions()[1]/2 + circle.radius())];
 
-    let displacement = [0, 0];
+    let penetration = [
+        Math.max(0, -distance_to_border[0]),
+        Math.max(0, -distance_to_border[1])
+    ];
 
-    if (Math.sign(distance_to_border[0]) !== Math.sign(horizontal_sign)){
-        displacement[0] = distance_to_border[0];
-    } else {
-        return [false, [0,0]]
-    }
-    if (Math.sign(distance_to_border[1]) !== Math.sign(vertical_sign)){
-        displacement[1] = distance_to_border[1];
-    } else {
+    if (penetration[0] === 0 || penetration[1] === 0) {
         return [false, [0,0]]
     }
 
-    if ((Math.abs(displacement[0]) < circle.radius()) && (Math.abs(displacement[1]) < circle.radius())){
-        if ((Math.pow(circle.radius()-Math.abs(displacement[0]),2) + Math.pow(circle.radius()-Math.abs(displacement[1]),2)) >= Math.pow(circle.radius(),2)){
+    if ((penetration[0] < circle.radius()) && (penetration[1] < circle.radius())){
+        if ((Math.pow(circle.radius()-penetration[0],2) + Math.pow(circle.radius()-penetration[1],2)) >= Math.pow(circle.radius(),2)){
             return [false, [0, 0]]
         } else {
-            let delta_x = [circle.radius()-Math.abs(displacement[0]), circle.radius()-Math.abs(displacement[1])];
+            let delta_x = [circle.radius()-penetration[0], circle.radius()-penetration[1]];
             let distance_to_corner = Math.pow(Math.pow(delta_x[0],2)+Math.pow(delta_x[1],2),0.5);
             let expansion = circle.radius() - distance_to_corner;
 
             return [true, [-horizontal_sign*expansion*delta_x[0]/distance_to_corner, -vertical_sign*expansion*delta_x[1]/distance_to_corner]]
-
         }
     }
 
-    if (Math.abs(displacement[0]) < Math.abs(displacement[1])){
-        return [true, [displacement[0], 0]]
+    if (penetration[0] < penetration[1]){
+        return [true, [-horizontal_sign*penetration[0], 0]]
     } else {
-        return [true, [0, displacement[1]]]
+        return [true, [-vertical_sign*penetration[1], penetration[1]]]
     }
     
 
