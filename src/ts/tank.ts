@@ -1,4 +1,6 @@
 import * as cls from "./collision";
+import { Effect } from "./effect";
+import { DirectorTalker, PetitionType } from "./object_commons";
 import {Projectile} from "./projectile";
 
 interface TankState {
@@ -31,8 +33,9 @@ export class Tank extends cls.CollidableObject {
     ammo: number;
     keys: TankKeys;
     scene_dimensions: number[];
+    director_talker: DirectorTalker;
 
-    constructor(position: number[], keys: TankKeys, scene_dimensions: number[]){
+    constructor(position: number[], keys: TankKeys){
         
         super({object_type: "tank"}, [
             new cls.CircleCollider(
@@ -42,8 +45,10 @@ export class Tank extends cls.CollidableObject {
                             this.state.speed*Math.sin(this.state.angle*Math.PI/180)]}
         )]);
 
-        let side_time = 6000;
-        let acceleration_time = 200;
+        this.director_talker = new DirectorTalker();
+
+        let adimensional_max_speed = 4;
+        let acceleration_time = 0.3;
 
         this.ammo = 8;
 
@@ -55,28 +60,36 @@ export class Tank extends cls.CollidableObject {
             health: 100
         };
         this.stats = {
-            max_speed: scene_dimensions[0]/side_time,
-            acceleration: scene_dimensions[0]/side_time / acceleration_time,
-            angular_acceleration: 0.5,
-            max_angular_speed: 0.2
+            max_speed: adimensional_max_speed*10,
+            acceleration: adimensional_max_speed*10 / acceleration_time,
+            angular_acceleration: 5000,
+            max_angular_speed: 200
         }
 
         this.keys = keys;
-        this.scene_dimensions = scene_dimensions;
 
     }
 
     shoot(): [boolean, Projectile] {
         if (this.ammo !== 0){
             this.ammo = this.ammo - 1;
-            return [true, new Projectile(   this.state.position, 
-                                            this.state.angle,
-                                            this.scene_dimensions)
+            this.state.speed -= 20;
+            this.state.angular_speed += (Math.random()-0.5) * 800;
+
+            let initial_position = [
+                this.state.position[0] + 4*Math.cos(this.state.angle*Math.PI/180),
+                this.state.position[1] + 4*Math.sin(this.state.angle*Math.PI/180)
             ]
+
+            this.director_talker.ask_director([PetitionType.CreateEffect, new Effect(initial_position as [number, number], 0.8)]);
+
+            return [true, new Projectile(   initial_position, 
+                                            this.state.angle)
+            ]
+            
         } else {
             return [false, new Projectile(  this.state.position, 
-                                            this.state.angle,
-                                            this.scene_dimensions)
+                                            this.state.angle)
             ]
         }
     }
@@ -84,6 +97,7 @@ export class Tank extends cls.CollidableObject {
     compute_collision (collided_data, displacement: number[]) {
         if (collided_data.object_type === "projectile"){
             this.state.health -= 20;
+            this.director_talker.ask_director([PetitionType.CreateEffect, new Effect(this.state.position as [number, number], 0.4)]);
             return 
         }
 

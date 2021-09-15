@@ -1,5 +1,6 @@
 import * as cls from "./collision";
 import { GravityWell } from "./tank";
+import { DirectorTalker, PetitionType} from "./object_commons";
 
 export enum ProjState {
     Alive,
@@ -14,18 +15,21 @@ export class Projectile extends cls.CollidableObject {
     velocity: number[];
     angle: number;
     angular_speed: number;
+    director_talker: DirectorTalker;
 
-    constructor(position, angle, scene_dimensions){
+    constructor(position, angle){
 
         super({object_type: "projectile"}, [
             new cls.CircleCollider(()=> this.position, ()=> 3, ()=> this.velocity)
         ]);
 
-        let side_time = 1000;
+        let adimensional_speed = 20;
         this.state = ProjState.Alive
         this.position = position;
         this.angle = angle;
-        this.velocity = [Math.cos, Math.sin].map((trig) => trig(angle*Math.PI/180)*scene_dimensions[0]/side_time);
+        this.velocity = [Math.cos, Math.sin].map((trig) => trig(angle*Math.PI/180)*adimensional_speed*10);
+
+        this.director_talker = new DirectorTalker();
     }
 
     update_frame(time_step){
@@ -62,6 +66,8 @@ export class Projectile extends cls.CollidableObject {
         if (this.state === ProjState.Alive){
             if (collided_data.object_type === "tank"){
                 this.state = ProjState.Dead;
+                this.director_talker.ask_removal();
+
             } else if (collided_data.object_type === "scene") {
                 this.state = ProjState.Bounce
                 this.collision_data.object_type = "bouncing_projectile"
@@ -74,13 +80,14 @@ export class Projectile extends cls.CollidableObject {
                 let velocity_projection = this.velocity.map((x,i) => x*collision_vector[i]);
 
                 this.velocity = this.velocity.map((x,i) => (x - 2*velocity_projection[i])*0.6);
-                this.angular_speed = Math.random()*4 - 2;
+                this.angular_speed = Math.random()*4000 - 2000;
             }
         }
 
         if (this.state !== ProjState.Alive) {
             if (collided_data.object_type === "tank"){
                 this.state = ProjState.Dead
+                this.director_talker.ask_removal();
             }
         }
 

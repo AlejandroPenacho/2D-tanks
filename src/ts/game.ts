@@ -2,6 +2,8 @@ import * as tnk from "./tank";
 import * as pjl from "./projectile";
 import * as scn from "./scene";
 import * as cls from "./collision";
+import * as eft from "./effect";
+import { PetitionType } from "./object_commons";
 
 
 export class Game {
@@ -9,12 +11,14 @@ export class Game {
     scenery: scn.Scene;
     projectiles: pjl.Projectile[];
     gravity_wells: tnk.GravityWell[];
+    effects: eft.Effect[];
 
     constructor(scenery: scn.Scene, tanks: tnk.Tank[]){
         this.tanks = tanks;
         this.scenery = scenery;
         this.projectiles = [];
         this.gravity_wells = [];
+        this.effects = [];
     }
 
     get_frame(time_step: number, pressed_keys: Map<string, boolean>){
@@ -22,18 +26,25 @@ export class Game {
         this.update_objects(time_step, pressed_keys);
         this.compute_all_collision();
 
+        this.answer_object_petitions();
+
 
         this.projectiles = this.projectiles.filter((x) => {
-            return x.state !== pjl.ProjState.Dead;
+            return !x.director_talker.removal_asked
+        })
+
+        this.effects = this.effects.filter((x) => {
+            return !x.director_talker.removal_asked
         })
         
         this.tanks = this.tanks.map((tank) => {
             if (tank.state.health <= 0){
-                return new tnk.Tank(this.get_best_spawn(), tank.keys, this.scenery.dimensions)
+                return new tnk.Tank(this.get_best_spawn(), tank.keys)
             } else {
                 return tank
             }
         })
+
     }
 
     get_best_spawn(): [number, number]{
@@ -69,11 +80,43 @@ export class Game {
                 cls.compute_collision(this.tanks[i], this.tanks[j]);
             }
         }
+
     }
 
     update_objects(time_step, pressed_keys){
         this.tanks.forEach((x) => {x.update_frame(time_step, pressed_keys)});
         this.projectiles.forEach((x) => {x.get_gravity_influence(this.gravity_wells, time_step); x.update_frame(time_step)});
+        this.effects.forEach((x) => {x.update_frame(time_step)});
+    }
+
+    answer_object_petitions() {
+        this.projectiles.forEach((x) => {
+            if (!x.director_talker.petition_available){
+                return x
+            } else {
+                x.director_talker.petition_list.forEach((petition) => { this.handle_petition(petition) });
+            }
+            x.director_talker.petition_available = false;
+            x.director_talker.petition_list = [];
+        })
+
+        this.tanks.forEach((x) => {
+            if (!x.director_talker.petition_available){
+                return x
+            } else {
+                x.director_talker.petition_list.forEach((petition) => { this.handle_petition(petition) });
+            }
+            x.director_talker.petition_available = false;
+            x.director_talker.petition_list = [];
+        })
+
+
+    }
+
+    handle_petition(petition: any){
+        if (petition[0] === PetitionType.CreateEffect){
+            this.effects.push(petition[1]);
+        }
     }
 
 }

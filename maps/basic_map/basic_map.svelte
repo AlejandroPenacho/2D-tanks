@@ -1,0 +1,37 @@
+<svg
+   width="200"
+   height="150"
+   viewBox="0 0 199.99999 150"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <rect
+     style="opacity:1;fill:#91c169;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="scene"
+     width="200.13882"
+     height="150.09895"
+     x="-0.020740176"
+     y="0.066525087" />
+  <rect
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.47377;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+     id="box"
+     width="31.09374"
+     height="32.512115"
+     x="130.07704"
+     y="83.012444" />
+  <circle
+     style="opacity:1;fill:#000000;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+     id="spawn1"
+     cx="1.4677352"
+     cy="0.79324073"
+     r="6.5230851" />
+  <circle
+     style="fill:#000000;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+     id="spawn2"
+     cx="183.4821"
+     cy="136.57034"
+     r="6.5230851" />
+</svg>

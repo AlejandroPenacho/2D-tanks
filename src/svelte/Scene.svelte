@@ -1,6 +1,7 @@
 <script lang="ts">
     import Player from "/src/svelte/Player.svelte";
     import Bullet from "/src/svelte/Bullet.svelte";
+    import Effect from "./Effect.svelte";
 
     import * as tnk from "./../ts/tank";
     import * as gm from "./../ts/game";
@@ -11,7 +12,7 @@
     let ratio = Math.min(view_port[0]/scene_dimensions[0], view_port[1]/scene_dimensions[1]);
 
     
-    let scene_dim = [508, 285.75];
+    let scene_dim: [number, number] = [200, 150];
 
 
     let player_list = [
@@ -21,20 +22,21 @@
                 right: "d",
                 left: "a",
                 shoot: " "
-            }, scene_dim),
+            }),
             new tnk.Tank([100,50], {
                up: "ArrowUp",
                right: "ArrowRight",
                down: "ArrowDown",
                left: "ArrowLeft",
                shoot: "/"
-           }, scene_dim)
+           })
         ]
     //let gravity_well_list = [
     //    new ply.GravityWell([600, 600], 500)
     //];
 
-    let game = new gm.Game(new scn.Scene, player_list);
+    let game = new gm.Game(new scn.Scene(scene_dim, [[[130, 83], [31, 32.5]]], [[30, 30], [180, 130]]), 
+        player_list);
 
 
     let key_pressed = new Map();
@@ -81,7 +83,7 @@
         if (!frame_time) {
             frame_time = time;
         }
-        time_step = time - frame_time;
+        time_step = (time - frame_time)/1000;
         frame_time = time;
 
         game.get_frame(time_step, key_pressed);
@@ -131,6 +133,9 @@
     {/each}
     {#each game.projectiles as bullet}
         <Bullet bullet={bullet} />
+    {/each}
+    {#each game.effects as effect}
+        <Effect effect={effect} />
     {/each}
  </svg>
 </div>
