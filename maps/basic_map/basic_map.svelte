@@ -1,17 +1,17 @@
+
 <script lang="ts">
-   export let game;
-   import Tank from "./../../assets/Tank.svelte";
-   import Bullet from "./../../assets/Projectile.svelte";
-   import Effect from "./../../assets/Effect.svelte";
-
-
+   import {Game} from "./../../src/ts/game";
+   export let game: Game;
+   export let ratio;
+   import Tank from "./../../src/svelte/Tank.svelte";
+   import Bullet from "./../../src/svelte/Bullet.svelte";
+   import Effect from "./../../src/svelte/Effect.svelte";
 </script>
 
-
 <svg
-   width="200"
-   height="150"
-   viewBox="0 0 199.99999 150"
+   width="{199.99999*ratio}"
+   height="{150*ratio}"
+   viewBox="{game.scenery.vibration.displacement[0]} {game.scenery.vibration.displacement[1]} 199.99999 150"
    version="1.1"
    id="svg5"
    xmlns="http://www.w3.org/2000/svg">
@@ -32,19 +32,19 @@
      x="130.07704"
      y="83.012444" />
   <circle
-     style="opacity:1;fill:#000000;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+     style="opacity:0;fill:#000000;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
      id="spawn1"
      cx="1.4677352"
      cy="0.79324073"
      r="6.5230851" />
   <circle
-     style="fill:#000000;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+     style="opacity:0;fill:#000000;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
      id="spawn2"
      cx="183.4821"
      cy="136.57034"
      r="6.5230851" />
 
-     {#each game.tanks as tank}
+   {#each game.tanks as tank}
       <Tank player={tank} />
    {/each}
    {#each game.projectiles as bullet}

@@ -14,16 +14,47 @@ def compile_map(name):
     boxes = map(retrieve_box_element, box_pattern.finditer(svg_text))
     spawns = map(retrieve_spawn_element, spawn_pattern.finditer(svg_text))
 
-    create_svelte(f"{name}/{name}.svelte", svg_text)
+    create_svelte(f"{name}/{name}.svelte", svg_text, scene)
     create_ts(f"{name}/{name}.ts", scene, boxes, spawns)
 
 
 
-def create_svelte(name, svg_text):
+def create_svelte(name, svg_text, scene):
     file = open(name, "w")
 
     lines = svg_text.split('\n')
     lines = lines[3:]
+
+    lines[0] = '''
+<script lang="ts">
+   import {Game} from "./../../src/ts/game";
+   export let game: Game;
+   export let ratio;
+   import Tank from "./../../src/svelte/Tank.svelte";
+   import Bullet from "./../../src/svelte/Bullet.svelte";
+   import Effect from "./../../src/svelte/Effect.svelte";
+</script>
+
+<svg'''
+
+    lines[1] = f'   width="{{{scene[0]}*ratio}}"'
+    lines[2] = f'   height="{{{scene[1]}*ratio}}"'
+    lines[3] = f'   viewBox="{{game.scenery.vibration.displacement[0]}} {{game.scenery.vibration.displacement[1]}} {scene[0]} {scene[1]}"'
+
+    lines.pop()
+    lines.pop()
+    lines.append(f'''
+   {{#each game.tanks as tank}}
+      <Tank player={{tank}} />
+   {{/each}}
+   {{#each game.projectiles as bullet}}
+      <Bullet bullet={{bullet}} />
+   {{/each}}
+   {{#each game.effects as effect}}
+      <Effect effect={{effect}} />
+   {{/each}}''')
+    lines.append("</svg>")
+
     svg_text = '\n'.join(lines)
 
     file.write(svg_text)
@@ -49,7 +80,7 @@ def create_ts(name, scene, boxes, spawns):
         else:
             first = False
 
-        ts_text += f'\n\t\t[[{box[0][0]},{box[0][1]}],[{box[1][0]},{box[1][1]}]]'
+        ts_text += f'\n\t\t[[{box[1][0]},{box[1][1]}],[{box[0][0]},{box[0][1]}]]'
 
     ts_text += "\n\t],\n\t["
 
@@ -82,7 +113,7 @@ def retrieve_scene_element(scene_match):
 
 
 compile_map("basic_map")
-
+compile_map("new_map")
 
 
 

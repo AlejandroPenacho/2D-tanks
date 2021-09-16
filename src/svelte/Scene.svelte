@@ -2,28 +2,32 @@
     import Tank from "/src/svelte/Tank.svelte";
     import Bullet from "/src/svelte/Bullet.svelte";
     import Effect from "./Effect.svelte";
+    import AllMaps from "./../../maps/maps.svelte";
 
     import * as tnk from "./../ts/tank";
     import * as gm from "./../ts/game";
     import * as scn from "./../ts/scene";
+    import * as maps from "./../../maps/maps";
+
+    let map_chosen = 1;
+
+    let scene = maps.all_maps[map_chosen];
 
     let view_port = [document.documentElement.clientWidth, document.documentElement.clientHeight];
-    let scene_dimensions = [200, 150];
+    let scene_dimensions = maps.all_maps[map_chosen].dimensions;
     let ratio = Math.min(view_port[0]/scene_dimensions[0], view_port[1]/scene_dimensions[1]);
 
-    
-    let scene_dim: [number, number] = [200, 150];
 
 
     let player_list = [
-            new tnk.Tank([50,50], {
+            new tnk.Tank(scene.spawn_points[0], {
                 up: "w",
                 down: "s",
                 right: "d",
                 left: "a",
                 shoot: " "
             }),
-            new tnk.Tank([100,50], {
+            new tnk.Tank(scene.spawn_points[1], {
                up: "ArrowUp",
                right: "ArrowRight",
                down: "ArrowDown",
@@ -35,7 +39,7 @@
     //    new ply.GravityWell([600, 600], 500)
     //];
 
-    let game = new gm.Game(new scn.Scene(scene_dim, [[[130, 83], [31, 32.5]]], [[30, 30], [180, 130]]), 
+    let game = new gm.Game(maps.all_maps[map_chosen], 
         player_list);
 
 
@@ -106,37 +110,5 @@
 </style>
 
 <div class="main">
-    <svg
-    width="{200*ratio}"
-    height="{150*ratio}"
-    viewBox="{game.scenery.vibration.displacement[0]} {game.scenery.vibration.displacement[1]} 200 150"
-    version="1.1"
-    id="svg5"
-    xmlns="http://www.w3.org/2000/svg">
-   <defs
-      id="defs2" />
-   <rect
-      style="opacity:1;fill:#91c169;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
-      id="rect2885"
-      width="200.13882"
-      height="150.09895"
-      x="-0.020740176"
-      y="0.066525087" />
-   <rect
-      style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.47377;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
-      id="rect3231"
-      width="31.09374"
-      height="32.512115"
-      x="130.07704"
-      y="83.012444" />
-    {#each game.tanks as tank}
-        <Tank player={tank} />
-    {/each}
-    {#each game.projectiles as bullet}
-        <Bullet bullet={bullet} />
-    {/each}
-    {#each game.effects as effect}
-        <Effect effect={effect} />
-    {/each}
- </svg>
+    <AllMaps selected_map={map_chosen} ratio={ratio} game={game}/>
 </div>
