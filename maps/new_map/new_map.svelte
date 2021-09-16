@@ -14,7 +14,8 @@
    viewBox="{game.scenery.vibration.displacement[0]} {game.scenery.vibration.displacement[1]} 300 200"
    version="1.1"
    id="svg5"
-   xmlns="http://www.w3.org/2000/svg">
+   xmlns="http://www.w3.org/2000/svg"
+  >
   <defs
      id="defs2" />
   <rect

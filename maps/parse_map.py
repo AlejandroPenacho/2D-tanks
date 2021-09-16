@@ -25,6 +25,13 @@ def create_svelte(name, svg_text, scene):
     lines = svg_text.split('\n')
     lines = lines[3:]
 
+    for index, line in enumerate(lines):
+        if "xmlns:svg" in line:
+            if ">" in line:
+                lines[index] = "  >"
+            else:
+                lines[index] = ""
+
     lines[0] = '''
 <script lang="ts">
    import {Game} from "./../../src/ts/game";
