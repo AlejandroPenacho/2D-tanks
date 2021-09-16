@@ -160,6 +160,49 @@ export class Tank extends cls.CollidableObject {
     }
 }
 
+export class DeadTank {
+    duration: number;
+    current_time: number;
+    trajectory_angle: number;
+    position: [number, number]
+    speed: number;
+    angle: number;
+    angular_speed: number;
+    director_talker: DirectorTalker;
+    flame_positions: Array<[number, number]>;
+    flame_speeds: Array<[number, number]>;
+
+    constructor(position: [number, number], angle: number, trajectory_angle: number){
+        this.duration = 3;
+        this.current_time = 0;
+        this.position = position;
+        this.trajectory_angle = trajectory_angle;
+        this.speed = 60;
+        this.angle = angle;
+        this.angular_speed = 200;
+        this.flame_positions = [[Math.random()*8+1, Math.random()*8+1],[Math.random()*8+1, Math.random()*8+1], [Math.random()*8+1, Math.random()*8+1]];
+        this.flame_speeds = [[Math.random()*6-3, Math.random()*6-3],[Math.random()*6-3, Math.random()*6-3], [Math.random()*6-3, Math.random()*6-3]];
+
+        this.director_talker = new DirectorTalker();
+    }
+
+    update_frame(time_step){
+        this.position = [
+            this.position[0] + this.speed * Math.cos(this.trajectory_angle) * time_step,
+            this.position[1] + this.speed * Math.sin(this.trajectory_angle) * time_step,
+        ];
+        this.angle += this.angular_speed * time_step;
+        this.angular_speed *= 0.9;
+        this.speed *= 0.9;
+        this.current_time += time_step;
+        if (this.current_time >= this.duration){
+            this.director_talker.ask_removal();
+        }
+        this.flame_positions = this.flame_positions.map((x, i) => [x[0] + this.flame_speeds[i][0]*time_step, x[1] + this.flame_speeds[i][1]*time_step]);
+        this.flame_speeds = this.flame_speeds.map((x, i) => [x[0] + (Math.random()-0.5)*time_step, x[1] + (Math.random()-0.5)*time_step]);
+    }
+}
+
 
 
 export class GravityWell {

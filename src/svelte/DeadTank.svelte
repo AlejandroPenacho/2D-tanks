@@ -1,15 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<script lang="ts">
+
+    import {DeadTank} from "./../ts/tank";
+
+    export let dead_tank: DeadTank;
+</script>
+
 
 <svg
-   width="10mm"
-   height="10mm"
+   width="10"
+   height="10"
+   transform="translate({dead_tank.position[0]-5}, {dead_tank.position[1]-5}) rotate({dead_tank.angle}, 5,5)"
    viewBox="0 0 10 10"
    version="1.1"
    id="svg5"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns="http://www.w3.org/2000/svg">
   <defs
      id="defs2">
     <linearGradient
@@ -269,22 +274,22 @@
       <circle
          style="mix-blend-mode:normal;fill:url(#radialGradient2394);fill-opacity:1;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:bevel;paint-order:fill markers stroke;filter:url(#filter2890)"
          id="path2104"
-         cx="5.9154415"
-         cy="4.9368467"
+         cx="{dead_tank.flame_positions[0][0]}"
+         cy="{dead_tank.flame_positions[0][1]}"
          r="2.5078838"
          transform="matrix(1.1385202,0.27817459,-0.27817459,1.1385202,1.4948335,-3.6867857)" />
       <circle
          style="mix-blend-mode:normal;fill:url(#radialGradient2394-6);fill-opacity:1;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:bevel;paint-order:fill markers stroke;filter:url(#filter2890-1)"
          id="path2104-7"
-         cx="5.9154415"
-         cy="4.9368467"
+         cx="{dead_tank.flame_positions[1][0]}"
+         cy="{dead_tank.flame_positions[1][1]}"
          r="2.5078838"
          transform="matrix(0.56472551,0.13797936,-0.13797936,0.56472551,1.3929712,0.16606406)" />
       <circle
          style="mix-blend-mode:normal;fill:url(#radialGradient2394-0);fill-opacity:1;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:bevel;paint-order:fill markers stroke;filter:url(#filter2890-6)"
          id="path2104-6"
-         cx="5.9154415"
-         cy="4.9368467"
+         cx="{dead_tank.flame_positions[2][0]}"
+         cy="{dead_tank.flame_positions[2][1]}"
          r="2.5078838"
          transform="matrix(0.81732328,0.19969656,-0.19969656,0.81732328,-0.84687605,1.1521468)" />
     </g>

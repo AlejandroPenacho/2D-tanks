@@ -12,6 +12,7 @@ export class Game {
     projectiles: pjl.Projectile[];
     gravity_wells: tnk.GravityWell[];
     effects: eft.Effect[];
+    dead_tanks: tnk.DeadTank[];
 
     constructor(scenery: scn.Scene, tanks: tnk.Tank[]){
         this.tanks = tanks;
@@ -19,6 +20,7 @@ export class Game {
         this.projectiles = [];
         this.gravity_wells = [];
         this.effects = [];
+        this.dead_tanks = [];
     }
 
 
@@ -40,11 +42,15 @@ export class Game {
         
         this.tanks = this.tanks.map((tank) => {
             if (tank.state.health <= 0){
+                this.dead_tanks.push(new tnk.DeadTank(tank.state.position as [number, number], tank.state.angle, Math.random()*2*Math.PI));
+
                 return new tnk.Tank(this.get_best_spawn(), tank.keys)
             } else {
                 return tank
             }
-        })
+        });
+
+        this.dead_tanks = this.dead_tanks.filter((x) => !x.director_talker.removal_asked);
 
         this.scenery.update_frame(time_step);
 
@@ -57,7 +63,6 @@ export class Game {
             })
             return Math.min(...all_distances)
         });
-        console.log(min_distance)
         return this.scenery.spawn_points[min_distance.indexOf(Math.max(...min_distance))];
     }
 
@@ -90,6 +95,7 @@ export class Game {
         this.tanks.forEach((x) => {x.update_frame(time_step, pressed_keys)});
         this.projectiles.forEach((x) => {x.get_gravity_influence(this.gravity_wells, time_step); x.update_frame(time_step)});
         this.effects.forEach((x) => {x.update_frame(time_step)});
+        this.dead_tanks.forEach((x) => {x.update_frame(time_step)});
     }
 
     answer_object_petitions() {
@@ -119,6 +125,9 @@ export class Game {
     handle_petition(petition: any){
         if (petition[0] === PetitionType.CreateEffect){
             this.effects.push(petition[1]);
+        } else if (petition[0] === PetitionType.CreateDeadTank){
+            console.log(petition[1])
+            this.dead_tanks.push(petition[1]);
         }
     }
 

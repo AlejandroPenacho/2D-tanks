@@ -6,6 +6,7 @@
    import Tank from "./../../src/svelte/Tank.svelte";
    import Bullet from "./../../src/svelte/Bullet.svelte";
    import Effect from "./../../src/svelte/Effect.svelte";
+   import DeadTank from "../../src/svelte/DeadTank.svelte";
 </script>
 
 <svg
@@ -52,5 +53,8 @@
    {/each}
    {#each game.effects as effect}
       <Effect effect={effect} />
+   {/each}
+   {#each game.dead_tanks as dead_tank}
+      <DeadTank dead_tank={dead_tank} />
    {/each}
 </svg>
