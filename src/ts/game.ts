@@ -21,6 +21,7 @@ export class Game {
         this.effects = [];
     }
 
+
     get_frame(time_step: number, pressed_keys: Map<string, boolean>){
 
         this.update_objects(time_step, pressed_keys);
@@ -44,6 +45,8 @@ export class Game {
                 return tank
             }
         })
+
+        this.scenery.update_frame(time_step);
 
     }
 

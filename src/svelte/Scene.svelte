@@ -56,6 +56,7 @@
             if (shooter !== -1) {
                 let [canShoot, projectile] = game.tanks[shooter].shoot();
                 if (canShoot){
+                    game.scenery.start_vibration();
                     game.projectiles.push(projectile);
                 }
                 e.preventDefault();
@@ -108,7 +109,7 @@
     <svg
     width="{200*ratio}"
     height="{150*ratio}"
-    viewBox="0 0 200 150"
+    viewBox="{game.scenery.vibration.displacement[0]} {game.scenery.vibration.displacement[1]} 200 150"
     version="1.1"
     id="svg5"
     xmlns="http://www.w3.org/2000/svg">
