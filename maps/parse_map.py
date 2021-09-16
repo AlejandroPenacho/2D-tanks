@@ -8,9 +8,9 @@ def compile_map(name):
 
     box_pattern = re.compile(r'id="box.*?"\n\s*width="([0-9.]+)"\n\s*height="([0-9.]+)"\n\s*x="([0-9.]+)"\n\s*y="([0-9.]+)"')
     spawn_pattern = re.compile(r'id="spawn.*?"\n\s*cx="([0-9.]+)"\n\s*cy="([0-9.]+)"')
-    scene_pattern = re.compile(r'id="scene.*?"\n\s*width="([0-9.]+)"\n\s*height="([0-9.]+)"\n\s*x="([0-9.]+)"\n\s*y="([0-9.]+)"')
+    scene_pattern = re.compile(r'viewBox="0 0 ([0-9\.]+) ([0-9\.]+)"')
 
-    scene = next(map(retrieve_scene_element, box_pattern.finditer(svg_text)))
+    scene = next(map(retrieve_scene_element, scene_pattern.finditer(svg_text)))
     boxes = map(retrieve_box_element, box_pattern.finditer(svg_text))
     spawns = map(retrieve_spawn_element, spawn_pattern.finditer(svg_text))
 
@@ -40,7 +40,7 @@ def create_ts(name, scene, boxes, spawns):
     // written by a person, who deserves all recgnition but no blame
     // for whatever happens\n\n"""
             
-    ts_text += f'export let scene = new Scene({scene_dimensions},\n\t['
+    ts_text += f'export let scene = new Scene([{scene_dimensions[0]}, {scene_dimensions[1]}],\n\t['
 
     first = True
     for box in boxes:

@@ -1,11 +1,20 @@
+<script lang="ts">
+   export let game;
+   import Tank from "./../../assets/Tank.svelte";
+   import Bullet from "./../../assets/Projectile.svelte";
+   import Effect from "./../../assets/Effect.svelte";
+
+
+</script>
+
+
 <svg
    width="200"
    height="150"
    viewBox="0 0 199.99999 150"
    version="1.1"
    id="svg5"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns="http://www.w3.org/2000/svg">
   <defs
      id="defs2" />
   <rect
@@ -34,4 +43,14 @@
      cx="183.4821"
      cy="136.57034"
      r="6.5230851" />
+
+     {#each game.tanks as tank}
+      <Tank player={tank} />
+   {/each}
+   {#each game.projectiles as bullet}
+      <Bullet bullet={bullet} />
+   {/each}
+   {#each game.effects as effect}
+      <Effect effect={effect} />
+   {/each}
 </svg>

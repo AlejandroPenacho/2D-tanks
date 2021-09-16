@@ -64,7 +64,7 @@ export class Tank extends cls.CollidableObject {
         this.stats = {
             max_speed: adimensional_max_speed*10,
             acceleration: adimensional_max_speed*10 / acceleration_time,
-            angular_acceleration: 1000,
+            angular_acceleration: 2000,
             max_angular_speed: 200
         }
 
@@ -98,7 +98,7 @@ export class Tank extends cls.CollidableObject {
 
     compute_collision (collided_data, displacement: number[]) {
         if (collided_data.object_type === "projectile"){
-            this.state.health -= 20;
+            this.state.health -= 40;
             let distance = Math.pow(Math.pow(displacement[0],2)+Math.pow(displacement[1],2),0.5);
             let collision_position = [
                 this.state.position[0] + displacement[0],
@@ -140,10 +140,14 @@ export class Tank extends cls.CollidableObject {
 
         if (pressed[this.keys.right] && !pressed[this.keys.left]){
             this.state.angular_speed = clamped_change(this.state.angular_speed, this.stats.angular_acceleration*time_step, 
-                                                    [-this.stats.max_angular_speed, this.stats.max_angular_speed]);
+                        [-this.stats.max_angular_speed*Math.abs(this.state.speed)/this.stats.max_speed, 
+                          this.stats.max_angular_speed*Math.abs(this.state.speed)/this.stats.max_speed]);
+
         } else if (!pressed[this.keys.right] && pressed[this.keys.left]) {
             this.state.angular_speed = clamped_change(this.state.angular_speed, -this.stats.angular_acceleration*time_step, 
-                                                    [-this.stats.max_angular_speed, this.stats.max_angular_speed]);
+                        [-this.stats.max_angular_speed*Math.abs(this.state.speed)/this.stats.max_speed, 
+                          this.stats.max_angular_speed*Math.abs(this.state.speed)/this.stats.max_speed]);
+
         } else {
             this.state.angular_speed = drift_to(this.state.angular_speed, this.stats.angular_acceleration*time_step, 0);
         }

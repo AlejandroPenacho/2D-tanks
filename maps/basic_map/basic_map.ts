@@ -4,7 +4,7 @@ import {Scene} from "./../../src/ts/scene";
     // written by a person, who deserves all recgnition but no blame
     // for whatever happens
 
-export let scene = new Scene([31.09374, 32.512115],
+export let scene = new Scene([199.99999, 150],
 	[
 		[[31.09374,32.512115],[130.07704,83.012444]]
 	],
