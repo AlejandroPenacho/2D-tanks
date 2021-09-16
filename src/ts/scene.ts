@@ -63,7 +63,7 @@ export class Scene extends cls.CollidableObject{
                                     *Math.sin(current_angle)
                                     *Math.exp(-this.vibration.current_animation_time);
             this.vibration.displacement = [ current_amplitude*Math.cos(this.vibration.angle),
-                                            current_amplitude*Math.cos(this.vibration.angle)]
+                                            current_amplitude*Math.sin(this.vibration.angle)]
         }
     }
 
