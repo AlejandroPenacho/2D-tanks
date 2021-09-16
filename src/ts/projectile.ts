@@ -1,6 +1,7 @@
 import * as cls from "./collision";
 import { GravityWell } from "./tank";
 import { DirectorTalker, PetitionType} from "./object_commons";
+import { Effect } from "./effect";
 
 export enum ProjState {
     Alive,
@@ -73,6 +74,9 @@ export class Projectile extends cls.CollidableObject {
                 this.collision_data.object_type = "bouncing_projectile"
 
                 this.position = this.position.map((x,i) => x - displacement[i])
+
+                this.director_talker.ask_director([PetitionType.CreateEffect, new Effect(this.position as [number, number], 0.4)]);
+
                 
                 let total_displacement = Math.pow(Math.pow(displacement[0],2)+Math.pow(displacement[1],2),0.5);
                 let collision_vector = displacement.map((x) => Math.abs(x)/total_displacement);

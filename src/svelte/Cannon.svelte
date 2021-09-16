@@ -1,9 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
-   width="100mm"
-   height="100mm"
+   width="10"
+   height="10"
    viewBox="0 0 100 100"
    version="1.1"
    id="svg5"

@@ -33,6 +33,7 @@ export class Tank extends cls.CollidableObject {
     ammo: number;
     keys: TankKeys;
     scene_dimensions: number[];
+    damaged_points: Array<[number, number]>;
     director_talker: DirectorTalker;
 
     constructor(position: number[], keys: TankKeys){
@@ -46,9 +47,10 @@ export class Tank extends cls.CollidableObject {
         )]);
 
         this.director_talker = new DirectorTalker();
+        this.damaged_points = [];
 
         let adimensional_max_speed = 4;
-        let acceleration_time = 0.3;
+        let acceleration_time = 0.4;
 
         this.ammo = 8;
 
@@ -62,7 +64,7 @@ export class Tank extends cls.CollidableObject {
         this.stats = {
             max_speed: adimensional_max_speed*10,
             acceleration: adimensional_max_speed*10 / acceleration_time,
-            angular_acceleration: 5000,
+            angular_acceleration: 1000,
             max_angular_speed: 200
         }
 
@@ -97,7 +99,14 @@ export class Tank extends cls.CollidableObject {
     compute_collision (collided_data, displacement: number[]) {
         if (collided_data.object_type === "projectile"){
             this.state.health -= 20;
-            this.director_talker.ask_director([PetitionType.CreateEffect, new Effect(this.state.position as [number, number], 0.4)]);
+            let distance = Math.pow(Math.pow(displacement[0],2)+Math.pow(displacement[1],2),0.5);
+            let collision_position = [
+                this.state.position[0] + displacement[0],
+                this.state.position[1] + displacement[1]
+            ];
+
+            this.director_talker.ask_director([PetitionType.CreateEffect, new Effect(collision_position as [number, number], 0.9)]);
+            this.damaged_points.push([Math.random()*10 - 5, Math.random()*5.7-4.4])
             return 
         }
 

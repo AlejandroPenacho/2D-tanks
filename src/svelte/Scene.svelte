@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Player from "/src/svelte/Player.svelte";
+    import Tank from "/src/svelte/Tank.svelte";
     import Bullet from "/src/svelte/Bullet.svelte";
     import Effect from "./Effect.svelte";
 
@@ -130,7 +130,7 @@
       x="130.07704"
       y="83.012444" />
     {#each game.tanks as tank}
-        <Player player={tank} />
+        <Tank player={tank} />
     {/each}
     {#each game.projectiles as bullet}
         <Bullet bullet={bullet} />
