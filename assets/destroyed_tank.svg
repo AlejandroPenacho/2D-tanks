@@ -163,6 +163,27 @@
          stdDeviation="0.24010218"
          id="feGaussianBlur3687" />
     </filter>
+    <radialGradient
+       xlink:href="#linearGradient3379"
+       id="radialGradient1852"
+       cx="5.0276732"
+       cy="5.0270677"
+       fx="5.0276732"
+       fy="5.0270677"
+       r="4.979877"
+       gradientTransform="matrix(0.98919799,0,0,0.99720644,0.05430897,0.01404343)"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       style="color-interpolation-filters:sRGB"
+       id="filter1934"
+       x="-0.15947028"
+       y="-0.15818961"
+       width="1.3189406"
+       height="1.3163792">
+      <feGaussianBlur
+         stdDeviation="0.65463674"
+         id="feGaussianBlur1936" />
+    </filter>
   </defs>
   <g
      id="layer1">
@@ -288,5 +309,13 @@
          r="2.5078838"
          transform="matrix(0.81732328,0.19969656,-0.19969656,0.81732328,-0.84687605,1.1521468)" />
     </g>
+    <ellipse
+       style="opacity:1;fill:url(#radialGradient1852);fill-opacity:1;stroke-width:2.473;stroke-linecap:round;stroke-linejoin:bevel;paint-order:fill markers stroke;filter:url(#filter1934)"
+       id="fireball"
+       cx="5"
+       cy="5"
+       rx="4.9260845"
+       ry="4.9659653"
+       transform="matrix(0.83221507,0,0,0.83221507,0.84356786,0.84346619)" />
   </g>
 </svg>

@@ -161,7 +161,8 @@ export class Tank extends cls.CollidableObject {
 }
 
 export class DeadTank {
-    duration: number;
+    duration: [number, number];
+    exploding: boolean;
     current_time: number;
     trajectory_angle: number;
     position: [number, number]
@@ -171,10 +172,15 @@ export class DeadTank {
     director_talker: DirectorTalker;
     flame_positions: Array<[number, number]>;
     flame_speeds: Array<[number, number]>;
+    size: number;
+    max_size: number;
 
     constructor(position: [number, number], angle: number, trajectory_angle: number){
-        this.duration = 3;
+        this.duration = [3, 3];
         this.current_time = 0;
+        this.size = 1;
+        this.max_size = 4;
+        this.exploding = false;
         this.position = position;
         this.trajectory_angle = trajectory_angle;
         this.speed = 60;
@@ -187,19 +193,32 @@ export class DeadTank {
     }
 
     update_frame(time_step){
-        this.position = [
-            this.position[0] + this.speed * Math.cos(this.trajectory_angle) * time_step,
-            this.position[1] + this.speed * Math.sin(this.trajectory_angle) * time_step,
-        ];
-        this.angle += this.angular_speed * time_step;
-        this.angular_speed *= 0.9;
-        this.speed *= 0.9;
+
         this.current_time += time_step;
-        if (this.current_time >= this.duration){
-            this.director_talker.ask_removal();
+
+        if (!this.exploding){
+            this.position = [
+                this.position[0] + this.speed * Math.cos(this.trajectory_angle) * time_step,
+                this.position[1] + this.speed * Math.sin(this.trajectory_angle) * time_step,
+            ];
+            this.angle += this.angular_speed * time_step;
+            this.angular_speed *= 0.9;
+            this.speed *= 0.9;
+            
+            if (this.current_time >= this.duration[0]){
+                this.current_time = 0;
+                this.exploding = true;
+            }
+            this.flame_positions = this.flame_positions.map((x, i) => [x[0] + this.flame_speeds[i][0]*time_step, x[1] + this.flame_speeds[i][1]*time_step]);
+            this.flame_speeds = this.flame_speeds.map((x, i) => [x[0] + (Math.random()-0.5)*time_step, x[1] + (Math.random()-0.5)*time_step]);
         }
-        this.flame_positions = this.flame_positions.map((x, i) => [x[0] + this.flame_speeds[i][0]*time_step, x[1] + this.flame_speeds[i][1]*time_step]);
-        this.flame_speeds = this.flame_speeds.map((x, i) => [x[0] + (Math.random()-0.5)*time_step, x[1] + (Math.random()-0.5)*time_step]);
+        else {
+
+            if (this.current_time >= this.duration[1]){
+                this.director_talker.ask_removal();
+                this.size = 1 + this.max_size * this.current_time/this.duration[1];
+            }           
+        }
     }
 }
 
