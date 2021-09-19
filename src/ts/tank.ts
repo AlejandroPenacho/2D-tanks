@@ -176,10 +176,10 @@ export class DeadTank {
     max_size: number;
 
     constructor(position: [number, number], angle: number, trajectory_angle: number){
-        this.duration = [3, 3];
+        this.duration = [2, 1.5];
         this.current_time = 0;
         this.size = 1;
-        this.max_size = 4;
+        this.max_size = 10;
         this.exploding = false;
         this.position = position;
         this.trajectory_angle = trajectory_angle;
@@ -208,15 +208,16 @@ export class DeadTank {
             if (this.current_time >= this.duration[0]){
                 this.current_time = 0;
                 this.exploding = true;
+                this.director_talker.ask_director([PetitionType.GenerateVibration, 0]);
             }
             this.flame_positions = this.flame_positions.map((x, i) => [x[0] + this.flame_speeds[i][0]*time_step, x[1] + this.flame_speeds[i][1]*time_step]);
             this.flame_speeds = this.flame_speeds.map((x, i) => [x[0] + (Math.random()-0.5)*time_step, x[1] + (Math.random()-0.5)*time_step]);
         }
         else {
+            this.size = 1 + this.max_size * this.current_time/this.duration[1];
 
             if (this.current_time >= this.duration[1]){
                 this.director_talker.ask_removal();
-                this.size = 1 + this.max_size * this.current_time/this.duration[1];
             }           
         }
     }

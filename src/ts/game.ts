@@ -118,7 +118,15 @@ export class Game {
             x.director_talker.petition_available = false;
             x.director_talker.petition_list = [];
         })
-
+        this.dead_tanks.forEach((x) => {
+            if (!x.director_talker.petition_available){
+                return x
+            } else {
+                x.director_talker.petition_list.forEach((petition) => { this.handle_petition(petition) });
+            }
+            x.director_talker.petition_available = false;
+            x.director_talker.petition_list = [];
+        })
 
     }
 
@@ -128,6 +136,8 @@ export class Game {
         } else if (petition[0] === PetitionType.CreateDeadTank){
             console.log(petition[1])
             this.dead_tanks.push(petition[1]);
+        } else if (petition[0] === PetitionType.GenerateVibration){
+            this.scenery.start_vibration();
         }
     }
 

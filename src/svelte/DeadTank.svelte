@@ -1,16 +1,15 @@
 <script lang="ts">
 
     import {DeadTank} from "./../ts/tank";
-import Tank from "./Tank.svelte";
 
     export let dead_tank: DeadTank;
 </script>
 
 
 <svg
-   width="10"
-   height="10"
-   transform="translate({dead_tank.position[0]-5}, {dead_tank.position[1]-5}) rotate({dead_tank.angle}, 5,5)"
+   width="{10*dead_tank.size}"
+   height="{10*dead_tank.size}"
+   transform="translate({dead_tank.position[0]-5*dead_tank.size}, {dead_tank.position[1]-5*dead_tank.size}) rotate({dead_tank.angle}, {5*dead_tank.size},{5*dead_tank.size})"
    viewBox="0 0 10 10"
    version="1.1"
    id="svg5"
@@ -193,6 +192,8 @@ import Tank from "./Tank.svelte";
 </defs>
 <g
    id="layer1">
+   <g id="allButExplosion"
+      style="opacity:{dead_tank.exploding? 0: 1}">
   <g
      id="g3388"
      style="stroke:#000000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
@@ -315,6 +316,7 @@ import Tank from "./Tank.svelte";
        r="2.5078838"
        transform="matrix(0.81732328,0.19969656,-0.19969656,0.81732328,-0.84687605,1.1521468)" />
   </g>
+   </g>
   <ellipse
      style="opacity:{dead_tank.exploding? (1-dead_tank.current_time/dead_tank.duration[1]) : 0};fill:url(#radialGradient1852);fill-opacity:1;stroke-width:2.473;stroke-linecap:round;stroke-linejoin:bevel;paint-order:fill markers stroke;filter:url(#filter1934)"
      id="fireball"

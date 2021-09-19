@@ -3,7 +3,8 @@ export enum PetitionType {
     AddCreateTank,
     CreateProjectile,
     CreateEffect,
-    CreateDeadTank
+    CreateDeadTank,
+    GenerateVibration
 }
 
 type DirectorPetition = [PetitionType, any];
