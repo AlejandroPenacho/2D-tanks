@@ -33,7 +33,7 @@ export class Scene extends cls.CollidableObject{
         this.spawn_points = spawn_points;
         this.vibration = {
             displacement: [0, 0],
-            amplitude: 2,
+            amplitude: 8,
             duration: 0.4,
             current_animation_time: 0,
             is_on: false,
